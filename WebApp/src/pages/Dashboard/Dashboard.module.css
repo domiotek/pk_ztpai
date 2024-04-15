@@ -1,0 +1,30 @@
+.DashboardPage > h2 {
+	margin-bottom: 1.5em;
+}
+
+.ListsContainer {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+    justify-content: space-evenly;
+}
+
+.ListWrapper {
+    max-width: 515px;
+    flex: 1;
+    width: 100%;
+}
+
+@media screen and (min-width: 1200px) {
+    .ListWrapper {
+        max-width: 400px;
+    }
+}
+
+@media screen and (min-width: 1441px) {
+    .ListWrapper {
+        max-width: 360px;
+    }
+    
+}

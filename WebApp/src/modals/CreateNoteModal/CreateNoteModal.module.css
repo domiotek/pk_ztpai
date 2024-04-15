@@ -1,0 +1,11 @@
+.CreateNoteModal {
+	min-width: 320px;
+	max-width: 450px;
+	height: 550px;
+	width: 60%;
+}
+
+.CreateNoteModal textarea {
+    height: 150px;
+    resize: none;
+}

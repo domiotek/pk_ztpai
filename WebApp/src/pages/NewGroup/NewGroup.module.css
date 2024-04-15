@@ -1,0 +1,92 @@
+
+.ContentWrapper {
+	margin: 1em 1.5em;
+}
+
+.Subtitle {
+    color: var(--brighter-font-color);
+}
+
+.PanelsWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+	margin-top: 1.5em;
+}
+
+.Panel {
+    background: var(--bg-1);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 1px 1px 4px 0 #7b7a7a5e;
+	width: 100%;
+}
+
+.Panel h3 {
+    margin-bottom: 0.75em;
+}
+
+.Panel form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.Panel form button {
+    align-self: flex-end;
+	width: 40%;
+}
+
+.PanelDivider {
+    color: var(--brighter-font-color);
+    position: relative;
+	margin: 1em 0;
+}
+
+.PanelDivider::before, .PanelDivider::after {
+    content: "";
+    position: absolute;
+    height: 1px;
+    width: 50px;
+    background-color: var(--brighter-font-color);
+    top: calc(50%);
+    left: -60px;
+}
+
+.PanelDivider::after {
+    left: calc(100% + 10px);
+}
+
+
+@media screen and (min-width: 376px) {
+    .Panel {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+@media screen and (min-width: 769px) {
+    .PanelsWrapper {
+        flex-direction: row;
+        justify-content: center;
+        margin-top: 6rem;
+    }
+
+    .PanelDivider {
+        margin: 0 4.5rem;
+    }
+} 
+
+@media screen and (min-width: 1025px) {
+    /* main {
+        max-width: 1000px;
+        margin: auto;
+    } */
+
+    .PanelDivider {
+        margin: 0 6.5rem;
+    }
+}

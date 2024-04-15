@@ -1,0 +1,46 @@
+.CheckBox {
+    display: flex;
+	flex-direction: row-reverse;
+	justify-content: flex-end;
+	align-items: center;
+	font-size: 1rem;
+	-webkit-user-select: none;
+	user-select: none;
+	margin: 0.5rem 0 1.5rem;
+}
+
+.CheckBox input {
+	display: none;
+}
+
+.CheckBox .CheckMark {
+	position: relative;
+	font-size: 1.25em;
+    height: 1em;
+    width: 1em;
+    background-color: var(--third-light-2-color);
+    box-shadow: 1px 1px 10px 0 #4d4d4d33;
+	margin-right: 0.5em;
+	border-radius: 5px;
+}
+  
+.CheckBox input:checked ~ .CheckMark {
+	background-color: var(--primary-color);
+}
+  
+.CheckBox .CheckMark::after {
+	content: "";
+	position: absolute;
+	display: none;
+	left: 50%;
+    top: 50%;
+    width: 0.15em;
+    height: 0.3em;
+    border: solid white;
+    border-width: 0 0.15em 0.15em 0;
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.CheckBox input:checked ~ .CheckMark::after {
+	display: block;
+}

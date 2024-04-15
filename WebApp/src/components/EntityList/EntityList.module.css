@@ -1,0 +1,24 @@
+.EntityList {
+    margin: 0 auto;
+    width: 100%;
+}
+
+.EntityList.Shown {
+    display: block;
+}
+
+.EntityList h3 a {
+    font-size: 0.6rem;
+    margin-left: 0.75em;
+}
+
+.EntityList ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.NoPanelsNotice h5 {
+    text-align: center;
+    font-weight: 500;
+    color: var(--brighter-font-color);
+}

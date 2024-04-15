@@ -1,0 +1,73 @@
+.TargetListSwitcher {
+    margin: auto;
+    width: 90px;
+    background: #D9D9D9;
+    background: var(--third-light-2-color);
+    border-radius: 5rem;
+    display: flex;
+    align-items: center;
+    height: 30px;
+    justify-content: space-between;
+    position: relative;
+    padding: 0 2.5px;
+}
+
+.TargetListSwitcher i {
+    z-index: 2;
+}
+
+.TargetListSwitcher span {
+    position: absolute;
+    height: 100%;
+    width: 30px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    z-index: 1;
+    left: 0;
+    transition: left 0.3s;
+}
+
+.TargetListSwitcher span.ShowTasks {
+    left: 0;
+}
+
+.TargetListSwitcher span.ShowNotes {
+    left: calc(100% - 30px);
+}
+
+.Wrapper {
+    display: flex;
+    padding: 1.5em 0;
+}
+
+.Option {
+    font-weight: 400;
+    cursor: pointer;
+    padding: 0.5em;
+    position: relative;
+    background: transparent;
+    transition: background 0.4s;
+}
+
+.Option:hover {
+    background: #e5e5e5;
+}
+
+.Option:active {
+    background: #D9D9D9;
+}
+
+.Option.Active {
+    font-weight: 600;
+}
+
+.Option.Active::after {
+    content: "";
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--primary-color);
+}

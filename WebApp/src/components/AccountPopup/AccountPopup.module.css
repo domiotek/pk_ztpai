@@ -1,0 +1,111 @@
+.Wrapper {
+    position: absolute;
+    top: 4em;
+    right: 0.75em;
+    width: 280px;
+    background: var(--main-bg);
+    box-shadow: 0 1px 9px 3px #adadad5c;
+    border-radius: 1em;
+    padding: 1.25em;
+    display: none;
+    flex-direction: column;
+    z-index: 99;
+}
+
+.Wrapper.Shown {
+    display: flex;
+}
+
+.DetailsSection {
+    display: flex;
+}
+
+.DetailsSection > i {
+    display: flex;
+    width: 64px;
+    height: 64px;
+    align-items: center;
+    justify-content: center;
+    font-size: 2em;
+    background: var(--primary-light-2-color);
+    border-radius: 50%;
+}
+
+.DetailsContainer {
+    margin-left: 1em;
+    margin-top: 0.25em;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1;
+}
+
+.SignOutButton {
+    background: none;
+    overflow: hidden;
+    padding: 0;
+    align-self: flex-end;
+    width: 2em;
+    display: flex;
+    white-space: nowrap;
+    text-align: right;
+    direction: rtl;
+    align-items: center;
+    transition: width 0.4s;
+}
+
+.SignOutButton i {
+    font-size: 1.5em;
+    color: var(--secondary-color);
+    margin-left: 0.5em;
+}
+
+.SignOutButton:hover {
+    width: 7em;
+}
+
+.Wrapper > h4 {
+    margin: 1.75em 0 0.25em;
+}
+
+.GroupList {
+    max-height: 260px;
+    display: flex;
+    padding-left: 2em;
+    margin-bottom: 1.25em;
+}
+
+.GroupList a {
+    margin: 0.5em 0;
+    padding: 0.25em 0.5em;
+    background: transparent;
+    border-radius: 6px;
+    transition: background 0.4s;
+    cursor: pointer;
+    display: block;
+    color: var(--primary-font-color);
+}
+
+.GroupList a:hover {
+    background: var(--light-primary-color);
+}
+
+.GroupList a:active {
+    background: var(--primary-color);
+}
+
+.AddNewGroupButton {
+    background: none;
+    border: dashed 2px var(--primary-color);
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.9em;
+}
+
+.AddNewGroupButton i {
+    margin-right: 0.5em;
+    font-size: 1.5em;
+    color: var(--primary-color);
+}

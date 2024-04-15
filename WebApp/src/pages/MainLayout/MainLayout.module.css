@@ -1,0 +1,117 @@
+.LayoutContainer {
+    display: flex;
+}
+
+.NavigationPanel {
+    background: var(--secondary-color);
+    display: flex;
+    justify-content: space-evenly;
+    height: 3.5rem;
+    border-radius: 0.75em 0.75em 0 0;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 9;
+}
+
+.NavigationPanel a {
+    font-size: 1.5em;
+    color: white;
+    width: 64px;
+    text-align: center;
+}
+
+.NavigationPanel span {
+    display: none;
+}
+
+.NavigationPanel a.Active {
+    background: linear-gradient(360deg, white 60%, transparent);
+    padding: 0.2em;
+    border-radius: 100%;
+    transform: translateY(-35%);
+}
+
+.NavigationPanel a.Active i {
+    border-radius: 50%;
+    background: var(--primary-color);
+    padding: 0.5em;
+}
+
+
+.ContentWrapper {
+    flex:1;
+    padding: 1rem 1rem 3.5rem;
+}
+
+
+@media screen and (min-width: 769px) {
+	main {
+        flex-direction: row;
+    }
+
+    .NavigationPanel {
+        height: fit-content;
+        margin: 2em;
+        background: none;
+        flex-direction: column;
+        align-items: flex-start;
+        position: static;
+        width: unset;
+    }
+
+
+    .MainContent {
+        padding-top: 0;
+    }
+
+    .NavigationPanel a {
+        color: var(--secondary-color);
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 3rem 0.75rem 1rem!important;
+        width: 100%;
+    }
+
+    .NavigationPanel i {
+        color: var(--primary-dark-1-color);
+        width: 24px;
+    }
+
+    .NavigationPanel span {
+        display: block;
+        font-size: 1rem;
+        margin-left: 1.5rem;
+        font-weight: 700;
+    }
+
+    .NavigationPanel a:nth-child(1) {
+        order: 2;
+    }
+
+    .NavigationPanel a:nth-child(2) {
+        order: 1;
+    }
+
+    .NavigationPanel a:nth-child(3) {
+        order: 3;
+    }
+
+    .NavigationPanel a.Active {
+        background: var(--secondary-color);
+        border-radius: 0 1rem 1rem 0;
+        transform: unset;
+        padding: 0;
+        color: white;
+    }
+
+    .NavigationPanel a.Active i {
+        display: inline;
+        border-radius: unset;
+        background: none;
+        color: var(--primary-light-2-color);
+        padding: 0;
+    }
+
+}

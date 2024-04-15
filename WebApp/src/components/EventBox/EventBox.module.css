@@ -1,0 +1,88 @@
+.RecentEvents {
+    height: 200px;
+    background: var(--third-light-2-color);
+    padding: 0.5rem 0.3rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 1px 1px 7px 0 #615f5f38;
+    border-radius: 0.5rem;
+    max-width: 600px;
+    margin: 0 auto 1.5em;
+}
+
+.RecentEvents h5 {
+    margin: 0;
+    color: var(--brighter-font-color);
+}
+
+.EventCardCarousel {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    padding: 1rem 0;
+    position: relative;
+}
+
+.EventCardCarousel > div {
+    display: flex;
+    margin: 0 2rem;
+    overflow-x: hidden;
+    width: 100%;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+}
+
+.EventCardCarousel > div > h5 {
+    margin: auto;
+}
+
+.EventCard {
+    background: #F4EBEB;
+    width: 200px;
+    box-shadow: 1px 1px 6px 0 #6d6d6d40;
+    padding: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    margin: 0 0.5rem;
+    scroll-snap-align: start;
+    scroll-margin: 0.5rem;
+}
+
+.EventCardHeader {
+    display: flex;
+    align-items: center;
+}
+
+.EventCardHeader h6{
+    margin: 0;
+    margin-left: 0.35rem;
+}
+
+.EventCardBody {
+    flex: 1;
+    padding: 0.5rem 1rem;
+}
+
+.EventCardFooter span {
+    font-size: 0.6em;
+    display: block;
+    text-align: right;
+    padding: 0.3rem;
+}
+
+.EventCardCarousel button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    padding: 0;
+    left: 0;
+}
+
+.EventCardCarousel button:nth-of-type(2) {
+    right: 0;
+    left: unset;
+}

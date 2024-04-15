@@ -1,0 +1,93 @@
+.EntityPanel {
+    display: flex;
+    background: var(--third-light-2-color);
+    min-height: 65px;
+    align-items: flex-start;
+    padding: 0.5rem;
+    margin: 0.5rem;
+}
+
+.TaskBody {
+    margin-left: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+    overflow: hidden;
+}
+
+.TaskBody h3 {
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+
+.TaskBody h6 {
+    margin: 0 0 0 0.5rem;
+    color: var(--brighter-font-color);
+}
+
+.TaskBody h6 span {
+    color: var(--primary-color);
+    font-size: 0.4rem;
+    margin: 0 0.2rem;
+    transform: translateY(-1px);
+}
+
+.CheckBox {
+    display: flex;
+	flex-direction: row-reverse;
+	justify-content: flex-end;
+	align-items: center;
+	-webkit-user-select: none;
+	user-select: none;
+	font-size: 1.3rem;
+    margin: 0;
+}
+
+.CheckBox input {
+	display: none;
+}
+
+.CheckBox .Checkmark {
+	position: relative;
+	font-size: 1.25em;
+    height: 1em;
+    width: 1em;
+	margin-right: 0.5em;
+	border-radius: 50%;
+    background: #D9D9D9;
+    cursor: pointer;
+}
+  
+.CheckBox input:checked ~ .CheckMark {
+	background-color: var(--primary-color);
+}
+  
+.CheckBox .Checkmark::after {
+	content: "";
+	position: absolute;
+	display: none;
+	left: 50%;
+    top: 50%;
+    width: 0.15em;
+    height: 0.3em;
+    border: solid white;
+    border-width: 0 0.15em 0.15em 0;
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.CheckBox input:checked ~ .CheckMark::after {
+	display: block;
+}
+
+.CheckBox input:checked + .Checkmark::after {
+    left: 63%;
+    top: 33%;
+    width: 0.3em;
+    height: 0.8em;
+    border-width: 0 0.1em 0.1em 0;
+    border-color: black;
+}

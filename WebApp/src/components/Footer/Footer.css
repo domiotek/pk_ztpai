@@ -1,0 +1,87 @@
+.Container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: var(--bg-1);
+    font-size: 0.6em;
+}
+
+.DetailsWrapper {
+    display: flex;
+    padding: 0.5em;
+    justify-content: center;
+}
+
+.LogoSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.LogoSection > img {
+    width: 60%;
+    max-width: 100px;
+}
+
+.DetailsSection {
+    margin: 1em 1em 0;
+}
+
+.DetailsSection > h3 {
+    margin-bottom: 0.5em;
+}
+
+.DetailsSection > h5 {
+    font-weight: normal;
+}
+
+.DetailsSection a {
+    color: var(--primary-font-color);
+}
+
+.CopyrightDisclaimer {
+    text-align: center;
+}
+
+@media screen and (min-width: 376px) {
+    .DetailsSection {
+        margin: 1em 1.5em 0;
+    }
+}
+
+@media screen and (min-width: 426px) {
+    .Container {
+        font-size: 0.7em;
+    }
+}
+
+@media screen and (min-width: 769px) {
+    .Container {
+        font-size: 0.9em;
+    }
+
+    .CopyrightDisclaimer {
+        margin: 1em 0;
+    }
+
+    .LogoSection {
+        order: 1;
+        margin: 0 3.5em;
+        flex-shrink: 0;
+    }
+
+    .DetailsSection {
+        margin: 4.5em 0 0 0;
+        width: -webkit-fill-available;
+        width: -moz-available;
+    }
+
+    .DetailsSection:nth-child(2){
+        text-align: right;
+    }
+
+    .DetailsSection:nth-child(3) {
+        order: 2;
+    }
+
+}
