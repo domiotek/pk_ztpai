@@ -12,6 +12,7 @@ export default function CreateNoteModal() {
 
 	useEffect(()=>{
 		modalContext.setHostClassName(classes.CreateNoteModal);
+		modalContext.
 	},[]);
 
 	return (

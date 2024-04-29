@@ -1,27 +1,28 @@
 package com.api.controllers;
 
-import com.api.models.Session;
-import lombok.NoArgsConstructor;
+import com.api.dto.AuthenticationResponse;
+import com.api.dto.SignInRequest;
+import com.api.dto.SignUpRequest;
+import com.api.services.SecurityService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@NoArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/api/auth")
 public class SecurityController {
 
+    private final SecurityService service;
+
     @PostMapping("/signin")
-    public String signIn() {
-        return "Sign In";
+    public ResponseEntity<AuthenticationResponse> signIn(@RequestBody SignInRequest request) {
+        return ResponseEntity.ok(service.signIn(request));
     }
 
-    @GetMapping("/signout")
-    public String signOut() {
-        return "Sign Out";
-    }
-
-    @GetMapping("/signup")
-    public String signUp() {
-        return "Sign Up";
+    @PostMapping("/signup")
+    public ResponseEntity<AuthenticationResponse> signUp(@RequestBody SignUpRequest request) {
+        return ResponseEntity.ok(service.signUp(request));
     }
 
 }

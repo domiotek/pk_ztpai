@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 @NoArgsConstructor
 @RestController
-@RequestMapping("/api/groups/")
+@RequestMapping("/api/groups")
 public class GroupMemberController {
 
     @PostMapping("/join")
