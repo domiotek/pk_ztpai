@@ -96,7 +96,7 @@ public class GroupController {
 
         group.setName(request.getGroupName());
 
-        if(service.updateGroup(group))
+        if(service.updateGroup(group)!=null)
             return ResponseEntity.ok(
                     GenericResponse.builder()
                             .state(true)
@@ -122,7 +122,7 @@ public class GroupController {
 
         group.get().setInviteCode(service.generateInviteCode());
 
-        if(service.updateGroup(group.get()))
+        if(service.updateGroup(group.get())!=null)
             return ResponseEntity.ok(
                     GenericResponse.builder()
                             .state(true)

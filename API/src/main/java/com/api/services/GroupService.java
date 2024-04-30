@@ -10,8 +10,10 @@ import com.api.models.User;
 import com.api.repositories.GroupRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -62,26 +64,29 @@ public class GroupService {
         return Integer.toHexString(gen);
     }
 
+    @Transactional
     public boolean createGroup(GroupDefManagementRequest request, User owner) {
-
         var group = Group.builder()
                 .name(request.getGroupName())
                 .createdAt(ZonedDateTime.now())
                 .owner(owner)
                 .inviteCode(generateInviteCode())
+                .members(new ArrayList<>())
                 .build();
 
-        return updateGroup(group);
+        group = updateGroup(group);
+
+        return addToGroup(group, owner);
     }
 
-    public boolean updateGroup(Group group) {
+    public Group updateGroup(Group group) {
         try {
-            groupRepository.save(group);
+            group = groupRepository.save(group);
         }catch(Exception ex) {
-            return false;
+            return null;
         }
 
-        return true;
+        return group;
     }
 
     public boolean isInGroup(Group group, UserBasic user) {
@@ -100,7 +105,7 @@ public class GroupService {
     public boolean addToGroup(Group group, User user) {
         group.getMembers().add(user);
 
-        return updateGroup(group);
+        return updateGroup(group)!=null;
     }
 
     public boolean removeFromGroup(Group group, User user) {

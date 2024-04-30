@@ -32,18 +32,18 @@ public class SecurityService {
         try {
             authManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            request.getEmail(),
+                            request.getUsername(),
                             request.getPassword()
                     )
             );
         }catch (BadCredentialsException ex) {
             return SignInResponse.builder()
                     .state(false)
-                    .message("BadCredentials")
+                    .code("BadCredentials")
                     .build();
         }
 
-        var user = repository.findUserByEmail(request.getEmail()).orElseThrow();
+        var user = repository.findUserByEmail(request.getUsername()).orElseThrow();
 
         var jwtToken = jwtService.generateToken(user);
 
@@ -56,7 +56,7 @@ public class SecurityService {
     public void signUp(SignUpRequest request) {
         var user = User.builder()
                 .name(request.getName())
-                .email(request.getEmail())
+                .email(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .createdAt(ZonedDateTime.now())
                 .build();
@@ -73,12 +73,12 @@ public class SecurityService {
         final var emailRegex = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])";
         final var passRegex = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$";
 
-        if(request.getName()==null||request.getEmail()==null||request.getPassword()==null) {
+        if(request.getName()==null||request.getUsername()==null||request.getPassword()==null) {
             response.message("At least one of required fields (email, name, password) isn't present.");
             return response.build();
         }
 
-        if(!resolveRegex(emailRegex, request.getEmail())) {
+        if(!resolveRegex(emailRegex, request.getUsername())) {
             response.message("Invalid email input.");
             return response.build();
         }
@@ -89,7 +89,7 @@ public class SecurityService {
         }
 
         if(!resolveRegex(passRegex, request.getPassword())) {
-            response.message("Invalid password input. Password must be at least 8 characters long, has at least one uppercase, one lowercase letter and a digit.");
+            response.message("Invalid password input. Password must be at least 8 characters long, have at least one uppercase, one lowercase letter and a digit.");
             return response.build();
         }
 

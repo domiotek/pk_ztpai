@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SignInRequest {
-    private String email;
+    private String username;
     private String password;
 
 }

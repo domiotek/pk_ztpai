@@ -39,7 +39,7 @@ public class SecurityController {
         if(!requestValidity.isState()) return ResponseEntity.badRequest().body(requestValidity);
 
 
-        var user = userService.getUser(request.getEmail());
+        var user = userService.getUser(request.getUsername());
 
         if(user.isPresent())
             return ResponseEntity.badRequest().body(

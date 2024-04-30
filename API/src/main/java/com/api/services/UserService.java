@@ -29,6 +29,9 @@ public class UserService {
 
         if(authentication==null) return null;
 
+        final var principalClassName = authentication.getPrincipal().getClass().getSimpleName();
+
+        if(!principalClassName.equals("User")) return null;
         return ((User) authentication.getPrincipal()).getDTO();
     }
 
