@@ -68,11 +68,20 @@
     margin: 1.75em 0 0.25em;
 }
 
+.NoGroupsText {
+    padding: 2.5em 1em;
+    text-align: center;
+    font-weight: 600;
+}
+
 .GroupList {
     max-height: 260px;
     display: flex;
-    padding-left: 2em;
     margin-bottom: 1.25em;
+}
+
+.GroupListHost {
+    padding-left: 2em;
 }
 
 .GroupList a {
@@ -84,7 +93,23 @@
     cursor: pointer;
     display: block;
     color: var(--primary-font-color);
+    position: relative;
 }
+
+/* stylelint-disable font-family-no-missing-generic-family-keyword */
+
+.GroupList a.Active::before {
+    content: "\f00c";
+    font-weight: 900;
+    font-family: "Font Awesome 6 Free";
+    position: absolute;
+    color: var(--primary-dark-1-color);
+    font-size: 1.75em;
+    left: -25px;
+    top: 0;
+}
+
+/* stylelint-enable font-family-no-missing-generic-family-keyword */
 
 .GroupList a:hover {
     background: var(--light-primary-color);

@@ -1,7 +1,13 @@
+import { RESTAPI } from "./api"
+
 export namespace WebApp {
     interface IApplicationContext {
         setModalContent: (content: JSX.Element)=>boolean
         showModal: ()=>void
+        userData: RESTAPI.UserData.IResponseData | null
+        updatingUserData: boolean
+        activeGroup: number | null
+        setActiveGroup: (ID: number)=>void
     }
 
     type TModalClosingListener = (()=>boolean) | null

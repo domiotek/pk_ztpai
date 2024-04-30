@@ -1,72 +1,95 @@
+import axios, { AxiosError } from "axios";
 import { RESTAPI } from "../types/api";
 
-const API_SERVER_HOST = "127.0.0.1:5050";
-
-type TSuccessCallback<T> = (data: T)=>void;
-type TFailureCallback<T> = (errCode: T, statusCode: number, errorType: "Server" | "Client")=>void
+const API_SERVER_HOST = "127.0.0.1:8080";
 
 export function callAPI<T extends RESTAPI.Common.IBaseAPIEndpoint>(
 	method: T["method"],
 	endpointURL: T["url"],
-	urlParams: T["urlParams"],
-	onSuccess: TSuccessCallback<T["returnData"]>,
-	onError?: TFailureCallback<T["errCodes"]>,
-	body?: URLSearchParams) {
-
-		const aborter = new AbortController();
+	requestData?: T["requestData"],
+	urlParams?: T["urlParams"],
+	optimisticTokenCheck: boolean=false) {
 		const printAPIFailure = (endpoint: string, reason: string)=>console.error(`[API] Call to '${endpoint}' failed. Reason: ${reason}`);
 
-		new Promise<void>(async res=>{
-			if(urlParams) {
-				for (const paramName in urlParams) {
-					const value = urlParams[paramName];
-					endpointURL = endpointURL.replace(":"+paramName,value);
-				}
-			}
 
-			let response;
-			let result;
+		return new Promise<T["returnData"]>((res, rej)=>{
+			const token = localStorage.getItem("token");
 
-			try {
-				response = await fetch(`http://${API_SERVER_HOST}${endpointURL}`,{signal: aborter.signal, method, body});
-				result = await response.json() as T["returnPacket"];
-			}catch(err: any) {
-				let errCode: RESTAPI.Common.TCommonServerErrorCodes = "ServerUnavailable";
-				let statusCode: number;
-
-				switch(err?.name) {
-					case "AbortError": return;
-					case "SyntaxError":
-						errCode = "MalformedResponse";
-						statusCode = 500;
-					break;
-					default:
-						errCode = "ServerUnavailable";
-						statusCode = 503;
-
-				}
-
-				if(onError) onError(errCode, statusCode,"Server");
-				printAPIFailure(endpointURL,errCode);
-
+			if(!optimisticTokenCheck&&token==null) {
+				rej("Unauthorized");
 				return;
 			}
 
-
-			if(response.ok&&result.status=="Success") {
-				onSuccess(result.data);
-			}else {
-				if(onError) onError((result as any).errCode,response.status, response.status >=400&&response.status <500?"Client":"Server");
-
-				printAPIFailure(endpointURL,(result as any).errCode);
+			if(urlParams) {
+				for (const paramName in urlParams) {
+					const value = urlParams[paramName];
+					endpointURL = endpointURL.replace(":"+paramName,value.toString() ?? "");
+				}
 			}
 
-			res();
-		});
+			axios.request({
+				method,
+				url: `http://${API_SERVER_HOST}${endpointURL}`,
+				headers: {
+					Authorization: token?`Bearer ${token}`:undefined
+				},
+				params: method=="GET"?requestData:undefined,
+				data: method!="GET"?requestData:undefined
+			}).then(response=>{
+				const data = response.data as RESTAPI.Common.ISuccessGetResponse<T["requestData"]>;
+				res(data.data);
+			}).catch((error: AxiosError<T["returnPacket"]>)=>{
+				let errCode: T["errCodes"];
 
-		return ()=>aborter.abort();
+				const serverErrorData = error.response?.data as RESTAPI.Common.IFailureGetResponse<T["errCodes"]> | undefined;
+				
+				switch(true) {
+					case error.code=="ERR_NETWORK":
+						errCode = "ServerUnavailable";
+					break;
+					case error.response?.status==401&&serverErrorData?.code!="BadCredentials":
+						errCode = "Unauthorized";
+					break;
+					case serverErrorData!=undefined:
+						errCode = serverErrorData.code;
+						error.message = serverErrorData.message ?? error.message;
+					break;
+					default: 
+						errCode = "InternalError";
+						
+				}
+
+				printAPIFailure(endpointURL,errCode);
+				error.code = errCode;
+				rej(error);
+			});
+		});
 }
 
 export function OutsideContextNotifier(){
 	console.error("Tried to access context member outside of the context provider.");
 };
+
+
+/**
+ * Processes form data from given form element and given static data.
+ * @param form All html elements with the name attribute present inside the form will be processed.
+ * @param ignoreList List of inputs that will be ignored and won't be present in the final form data.
+ * @param staticFields Static data, that needs to be passed into endpoint but it's not present on the form.
+ */
+export function processFormData(form: HTMLFormElement, ignoreList?: string[], staticFields?: Record<string, string>) {
+	const formData: Record<string, string> = {};
+
+	for (const element of form.elements) {
+		const name = element.getAttribute("name");
+		if(name&&!ignoreList?.includes(name))
+			formData[name] = (element as HTMLInputElement).value;
+	}
+
+	for (const name in staticFields) {
+		if(!ignoreList?.includes(name))
+			formData[name] = staticFields[name];
+	}
+
+	return formData;
+}
