@@ -1,9 +1,9 @@
 package com.api.controllers;
 
-import com.api.dto.SignInResponse;
-import com.api.dto.SignInRequest;
-import com.api.dto.SignUpRequest;
-import com.api.dto.GenericResponse;
+import com.api.dto.requests.SignInRequest;
+import com.api.dto.requests.SignUpRequest;
+import com.api.dto.responses.GenericResponse;
+import com.api.dto.responses.SignInResponse;
 import com.api.services.SecurityService;
 import com.api.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,10 @@ public class SecurityController {
 
     @PostMapping("/signin")
     public ResponseEntity<SignInResponse> signIn(@RequestBody SignInRequest request) {
-        return ResponseEntity.ok(securityService.signIn(request));
+        var result = securityService.signIn(request);
+
+        if(result.isState()) return  ResponseEntity.ok(result);
+        else return ResponseEntity.status(401).body(result);
     }
 
     @PostMapping("/signup")

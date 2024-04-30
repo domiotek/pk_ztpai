@@ -1,13 +1,16 @@
 package com.api.controllers;
 
-import com.api.dto.GenericResponse;
+import com.api.dto.responses.GenericResponse;
 import com.api.dto.Group;
-import com.api.dto.GroupDefManagementRequest;
+import com.api.dto.requests.GroupDefManagementRequest;
+import com.api.dto.responses.GroupResponse;
 import com.api.services.GroupService;
 import com.api.services.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import static com.api.Utils.*;
 
 @RestController
 @AllArgsConstructor
@@ -18,18 +21,27 @@ public class GroupController {
     private UserService userService;
 
     @GetMapping("/{groupID}")
-    ResponseEntity<Group> getGroup(@PathVariable Number groupID) {
+    ResponseEntity<GroupResponse> getGroup(@PathVariable Number groupID) {
         var group = service.getGroup(groupID);
 
-        if(group.isEmpty()) return ResponseEntity.notFound().build();
+        if(group.isEmpty())
+            return ResponseEntity.status(404)
+                    .body(GroupResponse.builder()
+                            .state(false)
+                            .code("NoEntity")
+                            .message("Group doesn't exist")
+                            .build()
+                    );
 
         var initiator = userService.getSignedInUser();
 
         if(!service.isInGroup(group.get(), initiator))
-            return ResponseEntity.status(403).build();
+            return ResponseEntity.status(403).body(new GroupResponse(false, "AccessDenied", null));
 
-        return ResponseEntity.ok(
-                group.get().getDTO()
+        return ResponseEntity.ok(GroupResponse.builder()
+                .state(true)
+                .data(group.get().getDTO())
+                .build()
         );
     }
 
@@ -49,23 +61,17 @@ public class GroupController {
                 return ResponseEntity.ok(
                         GenericResponse.builder()
                                 .state(true)
-                                .message("Success")
                                 .build()
 
                 );
             else return ResponseEntity.badRequest().body(
                     GenericResponse.builder()
                             .state(false)
-                            .message("Maximum owned group count reached.")
+                            .code("MaxOwnedGroupsReached")
                             .build()
             );
         }else
-            return ResponseEntity.internalServerError().body(
-                    GenericResponse.builder()
-                            .state(false)
-                            .message("Unexpected error")
-                            .build()
-            );
+            return ResponseEntity.internalServerError().body(internalErrorResponse());
     }
 
     @PutMapping("/{groupID}")
@@ -77,19 +83,14 @@ public class GroupController {
         var groupOpt = service.getGroup(groupID);
 
         if(groupOpt.isEmpty())
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(404).body(groupNotFoundResponse());
 
         var group = groupOpt.get();
         var initiator = userService.getSignedInUser();
 
         if(!group.getOwner().getID().equals(initiator.getID())) {
 
-            return ResponseEntity.status(403).body(
-                    GenericResponse.builder()
-                            .state(false)
-                            .message("Access denied.")
-                            .build()
-            );
+            return ResponseEntity.status(403).body(accessDeniedResponse());
         }
 
 
@@ -99,16 +100,10 @@ public class GroupController {
             return ResponseEntity.ok(
                     GenericResponse.builder()
                             .state(true)
-                            .message("Success")
                             .build()
             );
         else
-            return ResponseEntity.internalServerError().body(
-                    GenericResponse.builder()
-                            .state(false)
-                            .message("Unexpected error")
-                            .build()
-            );
+            return ResponseEntity.internalServerError().body(internalErrorResponse());
     }
 
     @PostMapping("/{groupID}/regenInvite")
@@ -116,18 +111,13 @@ public class GroupController {
         var group = service.getGroup(groupID);
 
         if(group.isEmpty())
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(404).body(groupNotFoundResponse());
 
         var initiator = userService.getSignedInUser();
 
         if(!group.get().getOwner().getID().equals(initiator.getID())) {
 
-            return ResponseEntity.status(403).body(
-                    GenericResponse.builder()
-                            .state(false)
-                            .message("Access denied.")
-                            .build()
-            );
+            return ResponseEntity.status(403).body(accessDeniedResponse());
         }
 
         group.get().setInviteCode(service.generateInviteCode());
@@ -136,16 +126,10 @@ public class GroupController {
             return ResponseEntity.ok(
                     GenericResponse.builder()
                             .state(true)
-                            .message("Success")
                             .build()
             );
         else
-            return ResponseEntity.internalServerError().body(
-                    GenericResponse.builder()
-                            .state(false)
-                            .message("Unexpected error")
-                            .build()
-            );
+            return ResponseEntity.internalServerError().body(internalErrorResponse());
     }
 
 }

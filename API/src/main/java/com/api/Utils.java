@@ -1,6 +1,6 @@
 package com.api;
 
-import com.api.dto.GenericResponse;
+import com.api.dto.responses.GenericResponse;
 
 import java.util.regex.Pattern;
 
@@ -17,7 +17,22 @@ public class Utils {
     public static GenericResponse accessDeniedResponse() {
         return GenericResponse.builder()
                 .state(false)
-                .message("Access denied.")
+                .code("AccessDenied")
+                .build();
+    }
+
+    public static GenericResponse groupNotFoundResponse() {
+        return GenericResponse.builder()
+                .state(false)
+                .code("NoEntity")
+                .message("No such group")
+                .build();
+    }
+
+    public static GenericResponse internalErrorResponse() {
+        return GenericResponse.builder()
+                .state(false)
+                .code("InternalError")
                 .build();
     }
 }

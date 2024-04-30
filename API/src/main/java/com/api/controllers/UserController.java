@@ -1,18 +1,15 @@
 package com.api.controllers;
 
+import com.api.dto.User;
+import com.api.dto.responses.GenericResponse;
 import com.api.dto.UserBasic;
-import com.api.dto.UserDetailsResponse;
-import com.api.models.Group;
-import com.api.models.User;
+import com.api.dto.responses.UserDetailsResponse;
 import com.api.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,11 +22,9 @@ public class UserController {
         UserBasic user = service.getSignedInUser();
 
         return ResponseEntity.ok(
-                UserDetailsResponse
-                        .builder()
-                        .ID(user.getID())
-                        .name(user.getName())
-                        .groups(service.getGroupsOfAnUser(user.getID()))
+                UserDetailsResponse.builder()
+                        .state(true)
+                        .data(new User(user.getID(), user.getName(), service.getGroupsOfAnUser(user.getID())))
                         .build()
         );
     }

@@ -1,15 +1,15 @@
 package com.api.controllers;
 
-import com.api.dto.GenericResponse;
-import com.api.dto.GroupJoinRequest;
-import com.api.dto.GroupMembersResponse;
+import com.api.dto.responses.GenericResponse;
+import com.api.dto.requests.GroupJoinRequest;
+import com.api.dto.responses.GroupMembersResponse;
 import com.api.services.GroupService;
 import com.api.services.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static com.api.Utils.accessDeniedResponse;
+import static com.api.Utils.*;
 
 @AllArgsConstructor
 @RestController
@@ -24,7 +24,7 @@ public class GroupMemberController {
         var group = groupService.getGroup(request.getCode());
 
         if(group.isEmpty())
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(404).body(groupNotFoundResponse());
 
         var initiator = userService.getSignedInUser();
 
@@ -32,7 +32,7 @@ public class GroupMemberController {
             return ResponseEntity.badRequest().body(
                     GenericResponse.builder()
                             .state(false)
-                            .message("Already a member.")
+                            .code("AlreadyMember")
                             .build()
             );
 
@@ -42,16 +42,10 @@ public class GroupMemberController {
             return ResponseEntity.ok(
                     GenericResponse.builder()
                             .state(true)
-                            .message("Success")
                             .build()
             );
         else
-            return ResponseEntity.internalServerError().body(
-                    GenericResponse.builder()
-                            .state(false)
-                            .message("Unexpected error")
-                            .build()
-            );
+            return ResponseEntity.internalServerError().body(internalErrorResponse());
     }
 
     @GetMapping("/{groupID}/members")
@@ -59,19 +53,19 @@ public class GroupMemberController {
         var group = groupService.getGroup(groupID);
 
         if(group.isEmpty())
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(404).body(new GroupMembersResponse(false,"NoEntity", "No such group."));
 
         var initiator = userService.getSignedInUser();
 
         if(!groupService.isInGroup(group.get(), initiator))
-            return ResponseEntity.status(403).body(
-                    GroupMembersResponse.builder()
-                            .state(false)
-                            .message("Access denied.")
-                            .build()
-            );
+            return ResponseEntity.status(403).body(new GroupMembersResponse(false, "AccessDenied",null));
 
-        return ResponseEntity.ok(groupService.getGroupMembers(group.get()));
+        return ResponseEntity.ok(
+                GroupMembersResponse.builder()
+                        .state(true)
+                        .data(groupService.getGroupMembers(group.get()))
+                        .build()
+        );
 
     }
 
@@ -80,7 +74,7 @@ public class GroupMemberController {
         var group = groupService.getGroup(groupID);
 
         if(group.isEmpty())
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(404).body(groupNotFoundResponse());
 
         var initiator = userService.getSignedInUser();
 
@@ -104,7 +98,7 @@ public class GroupMemberController {
         var group = groupService.getGroup(groupID);
 
         if(group.isEmpty())
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(404).body(groupNotFoundResponse());
 
         var initiator = userService.getSignedInUser();
 
@@ -123,7 +117,7 @@ public class GroupMemberController {
             return ResponseEntity.badRequest().body(
                     GenericResponse.builder()
                             .state(false)
-                            .message(resolvedUser.isPresent()?"Not a member.":"User not found.")
+                            .code(resolvedUser.isPresent()?"NotMember":"NoUser")
                             .build()
             );
     }

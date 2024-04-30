@@ -1,4 +1,4 @@
-package com.api.dto;
+package com.api.dto.requests;
 
 import lombok.*;
 
@@ -6,8 +6,8 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SignInRequest {
+public class SignUpRequest {
+    private String name;
     private String email;
     private String password;
-
 }

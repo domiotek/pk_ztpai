@@ -1,8 +1,9 @@
 package com.api.services;
 
-import com.api.dto.GenericResponse;
-import com.api.dto.GroupDefManagementRequest;
-import com.api.dto.GroupMembersResponse;
+import com.api.dto.GroupMembers;
+import com.api.dto.responses.GenericResponse;
+import com.api.dto.requests.GroupDefManagementRequest;
+import com.api.dto.responses.GroupMembersResponse;
 import com.api.dto.UserBasic;
 import com.api.models.Group;
 import com.api.models.User;
@@ -38,16 +39,21 @@ public class GroupService {
     public GenericResponse validateGroupCreationRequest(GroupDefManagementRequest request) {
         final var response = GenericResponse.builder();
 
+        response.state(false);
+        response.code("BadRequest");
+
+        if(request.getGroupName()==null) {
+            response.message("groupName field is required.");
+            return response.build();
+        }
+
+        if(!resolveRegex("^[a-zA-Z0-9\\s]{2,15}$", request.getGroupName())) {
+            response.message("Invalid group name. It must be 2-15 characters long.");
+            return response.build();
+        }
+
         response.state(true);
-        response.message("Success");
-
-        if(request.getGroupName()==null)
-            response.state(false)
-                    .message("groupName field is required.");
-
-        if(!resolveRegex("^[a-zA-Z0-9\\s]{2,15}$", request.getGroupName()))
-            response.state(false)
-                    .message("Invalid group name. It must be 2-15 characters long.");
+        response.code(null);
         return response.build();
     }
 
@@ -117,9 +123,8 @@ public class GroupService {
         return false;
     }
 
-    public GroupMembersResponse getGroupMembers(Group group) {
-        return GroupMembersResponse.builder()
-                .state(true)
+    public GroupMembers getGroupMembers(Group group) {
+        return GroupMembers.builder()
                 .ownerID(group.getOwner().getID())
                 .members(group.getMembers().stream().map(User::getDTO).collect(Collectors.toList()))
                 .build();
