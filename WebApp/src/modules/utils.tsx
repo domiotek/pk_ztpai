@@ -16,7 +16,7 @@ export function callAPI<T extends RESTAPI.Common.IBaseAPIEndpoint>(
 			const token = localStorage.getItem("token");
 
 			if(!optimisticTokenCheck&&token==null) {
-				rej("Unauthorized");
+				rej(new AxiosError("Not signed in", "Unauthorized"));
 				return;
 			}
 
