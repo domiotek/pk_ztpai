@@ -1,50 +1,13 @@
-.GroupPage > h3 {
-    margin-bottom: 1em;
+.GroupPage {
+    position: relative;
 }
 
 .GroupPage > h2 {
     margin-bottom: 1.5em;
 }
 
-.UserPanel {
-    height: 80px;
-    background: var(--third-light-2-color);
-    display: flex;
-    align-items: center;
-    padding: 0.5rem;
-    margin: 0.5rem;
-}
-
-.UserImage {
-    height: 50px;
-    width: 50px;
-    background: var(--third-light-1-color);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    font-size: 1.7rem;
-}
-
-.PanelBody {
-    margin-left: 0.5rem;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    height: 100%;
-}
-
-.PanelBody > h3, .PanelBody > h6 {
-    margin: 0;
-}
-
-.PanelBody :global(.Button) {
-    font-size: 0.6rem;
-    border-radius: 5rem;
-    align-self: flex-end;
-    background: var(--third-dark-1-color);
-    margin-top: auto;
-    padding: 0.75em 2.75em;
+.SectionHeading {
+    margin-bottom: 1em;
 }
 
 .JoinSection {
@@ -90,23 +53,12 @@
     margin: 0.8rem!important;
 }
 
-.UpdateNameForm {
-    padding: 0 0.5em;
-    display: flex;
-    margin: 0 0 2em;
-    align-items: center;
+.RegenerateCodePrompt > a {
+    cursor: pointer;
 }
 
-.UpdateNameForm > input {
-    margin: 0;
-    background: #aabda5;
-    box-shadow: none;
-}
-
-.UpdateNameForm > button {
-    margin-left: 1.5em;
-    font-size: 0.8em;
-    padding: 0.6em 1.5em;
+.RegenerateCodePrompt > a:hover {
+    text-decoration: underline;
 }
 
 .ErrorMessageBox {

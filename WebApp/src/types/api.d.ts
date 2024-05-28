@@ -112,4 +112,63 @@ export namespace RESTAPI {
 
 		type IEndpoint = Common.IBuildAPIEndpoint<"POST", "/api/groups", null, "MaxOwnedGroupsReached", IRequest>
 	}
+
+	namespace GroupData {
+		interface IURLParams extends Record<string, string> {
+			groupID: string
+		}
+
+		interface IUserBasic {
+			id: number
+			email: string
+			name: string
+		}
+
+		interface IResponseData {
+			id: number
+			name: string
+			members: IUserBasic[]
+			ownerID: number
+			inviteCode: string
+		}
+
+		type IEndpoint = Common.IBuildAPIEndpoint<"GET", "/api/groups/:groupID", IResponseData, "NoEntity" | "AccessDenied",null, IURLParams>
+	}
+
+	namespace RenameGroup {
+		interface IURLParams extends Record<string, string> {
+			groupID: string
+		}
+
+		interface IRequestData extends Record<string, string> {
+			groupName: string
+		}
+
+		type IEndpoint = Common.IBuildAPIEndpoint<"PUT", "/api/groups/:groupID", null, "NoEntity" | "AccessDenied", IRequestData, IURLParams>
+	}
+
+	namespace RegenGroupInviteCode {
+		interface IURLParams extends Record<string, string> {
+			groupID: string
+		}
+
+		type IEndpoint = Common.IBuildAPIEndpoint<"POST", "/api/groups/:groupID/regenInvite", null, "NoEntity" | "AccessDenied", null, IURLParams>
+	}
+
+	namespace LeaveGroup {
+		interface IURLParams extends Record<string, string> {
+			groupID: string
+		}
+
+		type IEndpoint = Common.IBuildAPIEndpoint<"DELETE", "/api/groups/:groupID/members/self", null, "NoEntity" | "AccessDenied", null, IURLParams>
+	}
+
+	namespace KickFromGroup {
+		interface IURLParams extends Record<string, string> {
+			groupID: string
+			userID: string
+		}
+
+		type IEndpoint = Common.IBuildAPIEndpoint<"DELETE", "/api/groups/:groupID/members/:userID", null, "NoEntity" | "AccessDenied", null, IURLParams>
+	}
 }

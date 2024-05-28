@@ -13,6 +13,7 @@ import Items from './pages/Items/Items';
 import Group from './pages/Group/Group';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import Invite from './pages/Invite/Invite';
 
 
 const Login = React.lazy(()=>import('./pages/Login/Login'));
@@ -48,6 +49,10 @@ root.render(
 
 					<Route path='/logout' element={<Portal />}>
 						<Route index element={<Logout />} />
+					</Route>
+
+					<Route path="/invite" element={<Portal />}>
+						<Route index element={<Invite />} />
 					</Route>
 				</Routes>
 			</BrowserRouter>

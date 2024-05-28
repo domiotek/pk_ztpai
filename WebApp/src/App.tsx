@@ -6,7 +6,7 @@ import ModalContainer from "./components/ModalContainer/ModalContainer";
 import { WebApp } from "./types/app";
 import { callAPI } from "./modules/utils";
 import { RESTAPI } from "./types/api";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const AppContext = createContext<WebApp.IApplicationContext>({showModal: ()=>false, setModalContent: ()=>false, userData: null, updatingUserData: false, activeGroup: null, setActiveGroup: ()=>{}});
 
@@ -24,6 +24,8 @@ export default function App() {
         retry: false
     });
 
+    const queryClient = useQueryClient();
+
     const navigate = useNavigate();
 
     const profileClickHandler = useCallback(()=>{
@@ -39,38 +41,49 @@ export default function App() {
         return false;
     },[showModal]);
 
+    const resolveActiveGroup = useCallback(()=>{
+        if(!data) return;
+
+        if(data.groups.length==0) navigate("/new");
+        else {
+            let candidate: number | null = null;
+            const storedID = localStorage.getItem("activeGroup");
+            if(storedID) {
+                const ID = parseInt(storedID);
+                if(data.groups.filter(val=>val.id==ID).length>0)
+                    candidate = ID;
+            }
+
+            if(candidate===null) {
+                candidate=data.groups[0].id;
+                localStorage.setItem("activeGroup", candidate.toString());
+            }
+
+            setActiveGroup(candidate);
+        }
+        setTimeout(()=>setDelayedReadyState(true), 400);
+    },[data]);
+
 
     useEffect(()=>{
         if(error?.code=="Unauthorized") navigate("/login")
     },[error]);
 
     useEffect(()=>{
-        if(isSuccess) {
-            if(data.groups.length==0) navigate("/new");
-            else {
-                let candidate: number | null = null;
-                const storedID = localStorage.getItem("activeGroup");
-                if(storedID) {
-                    const ID = parseInt(storedID);
-                    if(data.groups.filter(val=>val.id==ID).length>0)
-                        candidate = ID;
-                }
+        if(!isFetching) resolveActiveGroup();
+    }, [isFetching]);
 
-                if(candidate===null) {
-                    candidate=data.groups[0].id;
-                    localStorage.setItem("activeGroup", candidate.toString());
-                }
-
-                setActiveGroup(candidate);
-            }
-            setTimeout(()=>setDelayedReadyState(true), 400);
-        }
-    }, [isSuccess]);
-
-    const updateActiveGroup = useCallback((ID: number)=>{
+    const updateActiveGroup = useCallback((ID: number | null)=>{
         setActiveGroup(ID);
-        localStorage.setItem("activeGroup",ID.toString());
-    },[]);
+        if(ID)
+            localStorage.setItem("activeGroup",ID.toString());
+        else {
+            localStorage.removeItem("activeGroup");
+            resolveActiveGroup();
+        }
+
+        queryClient.invalidateQueries({queryKey: ["GroupData"]});
+    },[resolveActiveGroup]);
 
     return (
         <>

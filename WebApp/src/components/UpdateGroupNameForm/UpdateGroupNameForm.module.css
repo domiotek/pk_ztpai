@@ -1,0 +1,28 @@
+.UpdateNameForm {
+    padding: 0 0.5em;
+    display: flex;
+	flex-direction: column;
+    margin: 0 0 2em;
+}
+
+.InputWrapper {
+	display: flex;
+	align-items: center;
+}
+
+.UpdateNameForm  input {
+    margin: 0;
+    background: #aabda5;
+    box-shadow: none;
+}
+
+.UpdateNameForm  button {
+    margin-left: 1.5em;
+    font-size: 0.8em;
+    padding: 0.6em 1.5em;
+}
+
+.ErrBox {
+	width: -moz-fit-content;
+	width: fit-content;
+}

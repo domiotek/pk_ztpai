@@ -1,0 +1,28 @@
+.ErrorToast {
+    position: absolute;
+    z-index: 98;
+    background: #ff4242;
+    padding: 1em 2.5em 1em 1em;
+    border-radius: 3em;
+    color: white;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 95%;
+    display: flex;
+    align-items: center;
+    font-size: 0.85em;
+    top: -8.5em;
+    opacity: 0;
+    transition: top 0.4s, opacity 0.4s;
+    cursor: pointer;
+}
+
+.ErrorToast.Shown {
+    top: 2.5rem;
+    opacity: 1;
+}
+
+.ErrorToast i {
+    font-size: 1.75em;
+    margin-right: 0.75em;
+}

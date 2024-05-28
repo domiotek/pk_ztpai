@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import SimpleBar from 'simplebar-react';
 import { RESTAPI } from '../../types/api';
 import { AppContext } from '../../App';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface IProps {
 	accountName: string
@@ -15,6 +16,7 @@ interface IProps {
 export default React.memo(function AccountPopup({accountName, groups, show, onActionTaken}: IProps) {
 
 	const navigate = useNavigate();
+	const queryClient = useQueryClient();
 
 	const {activeGroup, setActiveGroup} = useContext(AppContext);
 
@@ -23,6 +25,7 @@ export default React.memo(function AccountPopup({accountName, groups, show, onAc
 	const switchGroupCallback = useCallback(function(this: number) {
 		notify();
 		setActiveGroup(this);
+		queryClient.invalidateQueries({queryKey: ["GroupData"]});
 	},[notify]);
 
   	return (

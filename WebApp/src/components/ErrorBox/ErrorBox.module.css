@@ -1,0 +1,7 @@
+.ErrorBox {
+    background: #ffd5d5;
+    padding: 0.75em;
+    border: solid 1px #ff4242;
+    font-size: 0.9em;
+    border-radius: 0.5em;
+}

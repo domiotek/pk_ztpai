@@ -7,7 +7,7 @@ export namespace WebApp {
         userData: RESTAPI.UserData.IResponseData | null
         updatingUserData: boolean
         activeGroup: number | null
-        setActiveGroup: (ID: number)=>void
+        setActiveGroup: (ID: number | null)=>void
     }
 
     type TModalClosingListener = (()=>boolean) | null
