@@ -9,6 +9,7 @@ import com.api.models.Group;
 import com.api.models.User;
 import com.api.repositories.GroupRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import static com.api.Utils.groupNotFoundResponse;
 import static com.api.Utils.resolveRegex;
 
 @Service
@@ -96,6 +98,16 @@ public class GroupService {
         }
 
         return false;
+    }
+
+    public ResponseEntity<GenericResponse> validateGroupMembership(Optional<Group> maybeGroup, UserBasic user) {
+        if(maybeGroup.isEmpty())
+            return ResponseEntity.status(404).body(groupNotFoundResponse());
+
+        if(!isInGroup(maybeGroup.get(), user))
+            return ResponseEntity.status(403).body(new GenericResponse(false, "AccessDenied",null));
+
+        return null;
     }
 
     public boolean isGroupOwner(Group group, UserBasic user) {

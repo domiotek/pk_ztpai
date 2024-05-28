@@ -17,5 +17,6 @@ public class Group {
 
     private List<UserBasic> members;
     private Number ownerID;
-    private boolean isTheOwner;
+
+    private String inviteCode;
 }

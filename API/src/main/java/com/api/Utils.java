@@ -29,6 +29,23 @@ public class Utils {
                 .build();
     }
 
+    public static GenericResponse taskNotFoundResponse() {
+        return GenericResponse.builder()
+                .state(false)
+                .code("NoEntity")
+                .message("No such task")
+                .build();
+    }
+
+    public static GenericResponse noteNotFoundResponse() {
+        return GenericResponse.builder()
+                .state(false)
+                .code("NoEntity")
+                .message("No such note")
+                .build();
+    }
+
+
     public static GenericResponse internalErrorResponse() {
         return GenericResponse.builder()
                 .state(false)

@@ -37,10 +37,10 @@ public class Group {
     private User owner;
 
     @OneToMany(mappedBy = "group")
-    private Set<Task> tasks;
+    private List<Task> tasks;
 
     @OneToMany(mappedBy = "group")
-    private Set<Note> notes;
+    private List<Note> notes;
 
     @ManyToMany
     private List<User> members;
@@ -58,6 +58,7 @@ public class Group {
                 .name(getName())
                 .members(members.stream().map(User::getDTO).collect(Collectors.toCollection(ArrayList::new)))
                 .ownerID(getOwner().getID())
+                .inviteCode(getInviteCode())
                 .build();
     }
 }
