@@ -45,6 +45,8 @@ public class TaskService {
             }else response.assignedUser(user.get());
         }
 
+        response.dueDate(request.getDueDate());
+
         response.isValid(true);
         return response.build();
     }
@@ -83,6 +85,24 @@ public class TaskService {
 
 
         return result;
+    }
+
+    public com.api.dto.Task getTaskDTO(Number taskID) {
+        final var task = repository.findById(taskID.intValue());
+
+        if(task.isEmpty()) return null;
+
+        final var assignedUser = task.get().getAssignedUser();
+        return com.api.dto.Task.builder()
+                .taskID(task.get().getID())
+                .creator(task.get().getCreator().getDTO())
+                .title(task.get().getTitle())
+                .creationDate(task.get().getCreatedAt())
+                .assignedUser(assignedUser!=null?assignedUser.getDTO():null)
+                .group(task.get().getGroup().getBasicDTO())
+                .dueDate(task.get().getDueDate())
+                .isCompleted(task.get().getCompletionState())
+                .build();
     }
 
     public Optional<Task> getTask(Number taskID) {

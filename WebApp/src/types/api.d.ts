@@ -29,7 +29,7 @@ export namespace RESTAPI {
             returnData: any
             errCodes: TCommonServerErrorCodes | string
             returnPacket: ISuccessGetResponse<this["returnData"]> | IFailureGetResponse<this["errCodes"]>
-			requestData: Record<string, string  | number> | null
+			requestData: Record<string, string  | number | undefined> | null
             urlParams: Record<string, string | number> | null
 			error: IError<TCommonServerErrorCodes | string>
         }
@@ -170,5 +170,176 @@ export namespace RESTAPI {
 		}
 
 		type IEndpoint = Common.IBuildAPIEndpoint<"DELETE", "/api/groups/:groupID/members/:userID", null, "NoEntity" | "AccessDenied", null, IURLParams>
+	}
+
+	namespace Entities {
+		interface IUserBasic {
+			email: string
+			name: string
+			id: number
+		}
+
+		interface IGroupBasic {
+			name: string
+			id: number
+		}
+
+		interface ITask {
+			taskID: number,
+            isCompleted: boolean,
+			creationDate: string,
+            dueDate: string,
+            title: string,
+            assignedUser: Entities.IUserBasic | null,
+			creator: Entities.IUserBasic,
+			group: Entities.IGroupBasic
+		}
+
+		interface INote {
+			noteID: number,
+			creationDate: string,
+			title: string,
+			content: string,
+			creator: Entities.IUserBasic,
+			group: Entities.IGroupBasic
+		}
+	}
+
+	namespace GetNotes {
+
+		interface IURLParams extends Record<string, string> {
+			groupID: string
+		}
+
+		type IEndpoint = Common.IBuildAPIEndpoint<"GET", "/api/groups/:groupID/notes", Entities.INote[], "NoEntity" | "AccessDenied", null, IURLParams>
+	}
+
+	namespace GetTasks {
+
+		interface IURLParams extends Record<string, string> {
+			groupID: string
+		}
+
+		type IEndpoint = Common.IBuildAPIEndpoint<"GET", "/api/groups/:groupID/tasks", Entities.ITask[], "NoEntity" | "AccessDenied", null, IURLParams>
+	}
+
+	namespace GetTask {
+		interface IURLParams extends Record<string, string> {
+			groupID: string
+			taskID: string
+		}
+
+		type IEndpoint = Common.IBuildAPIEndpoint<"GET", "/api/groups/:groupID/tasks/:taskID", Entities.ITask, "NoEntity" | "AccessDenied", null, IURLParams>
+	}
+
+	namespace GetNote {
+		interface IURLParams extends Record<string, string> {
+			groupID: string
+			noteID: string
+		}
+
+		type IEndpoint = Common.IBuildAPIEndpoint<"GET", "/api/groups/:groupID/notes/:noteID", Entities.INote, "NoEntity" | "AccessDenied", null, IURLParams>
+	}
+
+
+	namespace ToggleTaskState {
+
+		interface IRequestData extends Record<string, string> {
+			state: boolean
+		}
+
+		interface IURLParams extends Record<string, string> {
+			groupID: string
+			taskID: string
+		}
+
+		type IEndpoint = Common.IBuildAPIEndpoint<"PUT", "/api/groups/:groupID/tasks/:taskID/state", null, "NoEntity" | "AccessDenied" | "UnrecognizedEntity", IRequestData, IURLParams>
+	}
+
+	namespace DeleteTask {
+		interface IURLParams extends Record<string, string> {
+			groupID: string
+			taskID: string
+		}
+
+		type IEndpoint = Common.IBuildAPIEndpoint<"DELETE", "/api/groups/:groupID/tasks/:taskID", null, "NoEntity" | "AccessDenied" | "UnrecognizedEntity", null, IURLParams>
+	}
+
+	namespace DeleteNote {
+		interface IURLParams extends Record<string, string> {
+			groupID: string
+			noteID: string
+		}
+
+		type IEndpoint = Common.IBuildAPIEndpoint<"DELETE", "/api/groups/:groupID/notes/:noteID", null, "NoEntity" | "AccessDenied" | "UnrecognizedEntity", null, IURLParams>
+	}
+
+	namespace GetGroupMembers {
+		interface IURLParams extends Record<string, string> {
+			groupID: string
+		}
+
+		interface IResponseData {
+			ownerID: number
+			members: Entities.IUserBasic[]
+		}
+
+		type IEndpoint = Common.IBuildAPIEndpoint<"GET", "/api/groups/:groupID/members", IResponseData, "NoEntity" | "AccessDenied", null, IURLParams>
+	}
+
+	namespace CreateTask {
+		interface IURLParams extends Record<string, string> {
+			groupID: string
+		}
+
+		interface IRequestData extends Record<string, string | number | undefined> {
+			title: string
+			assignedUserID?: string
+			dueDate?: string
+		}
+
+		type IEndpoint = Common.IBuildAPIEndpoint<"POST", "/api/groups/:groupID/tasks", null,"AccessDenied", IRequestData, IURLParams>
+	}
+
+	namespace CreateNote {
+		interface IURLParams extends Record<string, string> {
+			groupID: string
+		}
+
+		interface IRequestData extends Record<string, string | number | undefined> {
+			title: string
+			content: str
+		}
+
+		type IEndpoint = Common.IBuildAPIEndpoint<"POST", "/api/groups/:groupID/notes", null,"AccessDenied", IRequestData, IURLParams>
+	}
+
+	namespace UpdateTask {
+		interface IURLParams extends Record<string, string> {
+			groupID: string
+			taskID: string
+		}
+
+		interface IRequestData extends Record<string, string | number | undefined> {
+			title: string
+			assignedUserID?: string
+			dueDate?: string
+		}
+
+		type IEndpoint = Common.IBuildAPIEndpoint<"PUT", "/api/groups/:groupID/tasks/:taskID", null, "NoEntity" | "AccessDenied" | "UnrecognizedEntity", IRequestData, IURLParams>
+	}
+
+	namespace UpdateNote {
+		interface IURLParams extends Record<string, string> {
+			groupID: string
+			noteID: string
+		}
+
+		interface IRequestData extends Record<string, string | number | undefined> {
+			title: string
+			content: string
+		}
+
+		type IEndpoint = Common.IBuildAPIEndpoint<"PUT", "/api/groups/:groupID/notes/:noteID", null, "NoEntity" | "AccessDenied" | "UnrecognizedEntity", IRequestData, IURLParams>
 	}
 }

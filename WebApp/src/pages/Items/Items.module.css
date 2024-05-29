@@ -38,6 +38,18 @@
     margin-left: auto;
 }
 
+.InSectionAddEntityButton:hover {
+    background-color: color-mix(in srgb, var(--secondary-color) 100%, white 30%);
+}
+
+.InSectionAddEntityButton:active {
+    background-color: color-mix(in srgb, var(--secondary-color) 100%, black 30%);
+}
+
+.InSectionAddEntityButton i {
+    margin-right: 0.5em;
+}
+
 
 @media screen and (min-width: 1160px) {
     .AddEntityButton {

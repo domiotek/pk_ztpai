@@ -3,9 +3,7 @@ import com.api.dto.UserBasic;
 import com.api.dto.requests.NoteDefManagementRequest;
 import com.api.dto.requests.TaskDefManagementRequest;
 import com.api.dto.requests.TaskStateManagementRequest;
-import com.api.dto.responses.GenericResponse;
-import com.api.dto.responses.NotesResponse;
-import com.api.dto.responses.TasksResponse;
+import com.api.dto.responses.*;
 import com.api.models.Note;
 import com.api.models.Task;
 import com.api.services.GroupService;
@@ -68,6 +66,57 @@ public class UserContentController {
                 NotesResponse.builder()
                         .state(true)
                         .data(noteService.getNotes(group.get()))
+                        .build()
+        );
+    }
+
+    @GetMapping("/tasks/{taskID}")
+    ResponseEntity<TaskResponse> getTask(@PathVariable Number groupID, @PathVariable Number taskID) {
+        var group = groupService.getGroup(groupID);
+
+
+        if(group.isEmpty())
+            return ResponseEntity.status(404).body(new TaskResponse(false,"NoEntity", "No such group."));
+
+        var initiator = userService.getSignedInUser();
+
+        if(!groupService.isInGroup(group.get(), initiator))
+            return ResponseEntity.status(403).body(new TaskResponse(false, "AccessDenied",null));
+
+        var task = taskService.getTaskDTO(taskID);
+
+        if(task==null)
+            return ResponseEntity.status(404).body(new TaskResponse(false, "NoEntity", "No such task."));
+
+        return ResponseEntity.ok(
+                TaskResponse.builder()
+                        .state(true)
+                        .data(task)
+                        .build()
+        );
+    }
+
+    @GetMapping("/notes/{noteID}")
+    ResponseEntity<NoteResponse> getNote(@PathVariable Number groupID, @PathVariable Number noteID) {
+        var group = groupService.getGroup(groupID);
+
+        if(group.isEmpty())
+            return ResponseEntity.status(404).body(new NoteResponse(false,"NoEntity", "No such group."));
+
+        var initiator = userService.getSignedInUser();
+
+        if(!groupService.isInGroup(group.get(), initiator))
+            return ResponseEntity.status(403).body(new NoteResponse(false, "AccessDenied",null));
+
+        var note = noteService.getNote(noteID);
+
+        if(note.isEmpty())
+            return ResponseEntity.status(404).body(new NoteResponse(false, "NoEntity", "No such note."));
+
+        return ResponseEntity.ok(
+                NoteResponse.builder()
+                        .state(true)
+                        .data(note.get().getDTO())
                         .build()
         );
     }

@@ -43,6 +43,7 @@
 .ContentWrapper {
     flex:1;
     padding: 1rem 1rem 3.5rem;
+    width: 100%;
 }
 
 

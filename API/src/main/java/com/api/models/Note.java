@@ -1,5 +1,6 @@
 package com.api.models;
 
+import com.api.dto.UserBasic;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,4 +33,15 @@ public class Note {
     private String title;
 
     private String content;
+
+    public com.api.dto.Note getDTO() {
+        return com.api.dto.Note.builder()
+                .noteID(getID())
+                .title(getTitle())
+                .content(getContent())
+                .group(getGroup().getBasicDTO())
+                .creationDate(getCreatedAt())
+                .creator(getCreator().getDTO())
+                .build();
+    }
 }

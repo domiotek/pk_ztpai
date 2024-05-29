@@ -6,6 +6,25 @@
     padding: 0.5rem;
     margin: 0.5rem;
     min-height: 100px;
+    transition: transform 0.4s;
+    cursor: pointer;
+}
+
+.EntityPanel:hover {
+    transform: scale(1.1);
+}
+
+.EditIcon {
+    position: absolute;
+    right: 0.5em;
+    top: 0.5em;
+    color: var(--secondary-color);
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+
+.EntityPanel:hover .EditIcon {
+    opacity: 1;
 }
 
 .NoteHeader {
@@ -20,13 +39,12 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    width: 70%;
+    max-width: 70%;
 }
 
 .NoteHeader h6 {
     margin: 0 0 0 0.5rem;
     flex: 1;
-    text-align: right;
 }
 
 .NoteContent {

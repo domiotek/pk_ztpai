@@ -72,7 +72,7 @@ export default function Group() {
 			<LoadingPageWrapper isLoading={isFetching}>
 				{
 					error?
-						<GenericIlustratedMessage imgSrc="/ilustrations/generic_error.svg" imgAlt="Unknown error" title="Something bad and unexpected happened..." subtitle="Try reloading"/>
+						<GenericIlustratedMessage imgSrc="/illustrations/generic_error.svg" imgAlt="Unknown error" title="Something bad and unexpected happened..." subtitle="Try reloading"/>
 					:
 						<>
 							<h3 className={classes.SectionHeading}>Group name</h3>

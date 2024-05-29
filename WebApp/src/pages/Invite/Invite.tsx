@@ -17,7 +17,7 @@ export default function Invite() {
 
 	return (
 		<>
-			<GenericIlustratedMessage imgSrc="/ilustrations/generic_error.svg" imgAlt="Error" title="Invalid code" subtitle="Given code doesn't correspond with any of the group."/>
+			<GenericIlustratedMessage imgSrc="/illustrations/generic_error.svg" imgAlt="Error" title="Invalid code" subtitle="Given code doesn't correspond with any of the group."/>
 		</>
 	)
 }
