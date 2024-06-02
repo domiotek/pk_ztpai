@@ -37,6 +37,11 @@ export default function EditNoteModal({noteID}: IProps) {
 		staleTime: 60000
     });
 
+	useEffect(()=>{
+		setTitle(data?.title ?? "");
+		setContent(data?.content ?? "");
+	},[data]);
+
 
 	const deleteNoteMutation = useMutation<null,RESTAPI.DeleteNote.IEndpoint["error"], null>({
         mutationFn: state=>callAPI<RESTAPI.DeleteNote.IEndpoint>("DELETE","/api/groups/:groupID/notes/:noteID",{state} as any,{groupID: activeGroup?.toString() as string, noteID: noteID.toString()}),
@@ -94,7 +99,7 @@ export default function EditNoteModal({noteID}: IProps) {
 						<div className={commonClasses.ButtonsWrapper}>
 							<h3 className={`${commonClasses.CallStatus} ${submitError?commonClasses.Active:""}`}><i className='fas fa-info-circle'/>Operation failed</h3>
 							<button type="button" className={commonClasses.CancelButton} onClick={()=>modalContext.closeModal()}>Cancel</button>
-							<button type="submit" className={commonClasses.SubmitButton}>Create</button>
+							<button type="submit" className={commonClasses.SubmitButton}>Save</button>
 						</div>
 					</form>
 				:
