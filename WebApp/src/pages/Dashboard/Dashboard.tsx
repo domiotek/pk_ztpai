@@ -12,7 +12,7 @@ import EditNoteModal from "../../modals/EditNoteModal/EditNoteModal";
 
 
 export default function Dashboard() {
-	const {userData, updatingUserData, setModalContent, showModal} = useContext(AppContext);
+	const {userData, updatingUserData, setModalContent, showModal, activeGroup} = useContext(AppContext);
 
 	const navigate = useNavigate();
 
@@ -63,29 +63,38 @@ export default function Dashboard() {
 	return (
 		<div className={classes.DashboardPage}>
 			<h2>Hello {userData?.name}</h2>
-            <EventBox />
-            <section className={classes.ListsContainer}>
-				<div className={classes.ListWrapper}>
-					<EntityList<RESTAPI.GetTasks.IEndpoint>
-						header="Tasks" 
-						viewAllLink="/items" 
-						endpointURL="/api/groups/:groupID/tasks" 
-						noItemsImageUrl="/illustrations/add_task.svg"
-						dataSetID="Tasks"
-						itemFactory={taskFactory}
-					/>
-				</div>
-				<div className={classes.ListWrapper}>
-					<EntityList<RESTAPI.GetNotes.IEndpoint>  
-						header="Notes" 
-						viewAllLink="/items"
-						endpointURL="/api/groups/:groupID/notes"
-						noItemsImageUrl="/illustrations/add_note.svg"
-						dataSetID="Notes"
-						itemFactory={noteFactory}
-					/>
-				</div>
-            </section>
+			{
+				activeGroup!=null?
+				<>
+					 <EventBox />
+					<section className={classes.ListsContainer}>
+						<div className={classes.ListWrapper}>
+							<EntityList<RESTAPI.GetTasks.IEndpoint>
+								header="Tasks" 
+								viewAllLink="/items" 
+								endpointURL="/api/groups/:groupID/tasks" 
+								noItemsImageUrl="/illustrations/add_task.svg"
+								dataSetID="Tasks"
+								itemFactory={taskFactory}
+							/>
+						</div>
+						<div className={classes.ListWrapper}>
+							<EntityList<RESTAPI.GetNotes.IEndpoint>  
+								header="Notes" 
+								viewAllLink="/items"
+								endpointURL="/api/groups/:groupID/notes"
+								noItemsImageUrl="/illustrations/add_note.svg"
+								dataSetID="Notes"
+								itemFactory={noteFactory}
+							/>
+						</div>
+					</section>
+				</>
+				:
+				<>
+				</>
+			}
+           
 		</div>
 	)
 }

@@ -20,9 +20,10 @@ export default function Group() {
 	const navigate = useNavigate();
 
 	const {error, data, isFetching} = useQuery<RESTAPI.GroupData.IResponseData, RESTAPI.GroupData.IEndpoint["error"]>({
-        queryKey: ["GroupData"],
+        queryKey: ["GroupData", activeGroup],
         queryFn: ()=>callAPI<RESTAPI.GroupData.IEndpoint>("GET","/api/groups/:groupID",null, {groupID: activeGroup?.toString() ?? ""}),
-        retry: true
+        retry: true,
+		staleTime: 60000
     });
 
 	const inviteLinkHolder = useRef<HTMLHeadingElement>(null);

@@ -18,10 +18,11 @@ export default function App() {
     const [delayedReadyState, setDelayedReadyState] = useState<boolean>(false);
     const [activeGroup, setActiveGroup] = useState<number | null>(null);
 
-    const {error, data, isSuccess, isFetching} = useQuery<RESTAPI.UserData.IResponseData, RESTAPI.UserData.IEndpoint["error"]>({
+    const {error, data, isFetching} = useQuery<RESTAPI.UserData.IResponseData, RESTAPI.UserData.IEndpoint["error"]>({
         queryKey: ["UserData"],
         queryFn: ()=>callAPI<RESTAPI.UserData.IEndpoint>("GET","/api/me"),
-        retry: false
+        retry: false,
+		staleTime: 60000
     });
 
     const queryClient = useQueryClient();

@@ -25,7 +25,7 @@ export default React.memo(function AccountPopup({accountName, groups, show, onAc
 	const switchGroupCallback = useCallback(function(this: number) {
 		notify();
 		setActiveGroup(this);
-		queryClient.invalidateQueries({queryKey: ["GroupData"]});
+		queryClient.invalidateQueries({queryKey: ["GroupData", activeGroup]});
 		queryClient.invalidateQueries({queryKey: ["Tasks", activeGroup]});
 		queryClient.invalidateQueries({queryKey: ["Notes", activeGroup]});
 		queryClient.invalidateQueries({queryKey: ["EventLog", activeGroup]});
