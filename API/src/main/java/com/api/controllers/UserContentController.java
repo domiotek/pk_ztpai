@@ -205,7 +205,7 @@ public class UserContentController {
         task.setDueDate(resolvedRequest.getDueDate());
         task.setAssignedUser(resolvedRequest.getAssignedUser());
 
-        if(taskService.updateTask(task)!=null)
+        if(taskService.updateTask(task, initiator, false)!=null)
             return ResponseEntity.ok(
                     GenericResponse.builder()
                             .state(true)
@@ -231,7 +231,7 @@ public class UserContentController {
 
             task.setCompletionState(request.isState());
 
-            if (taskService.updateTask(task) != null)
+            if (taskService.updateTask(task, initiator, true) != null)
                 return ResponseEntity.ok(
                         GenericResponse.builder()
                                 .state(true)
@@ -266,7 +266,7 @@ public class UserContentController {
         note.setTitle(request.getTitle());
         note.setContent(request.getContent());
 
-        if(noteService.updateNote(note)!=null)
+        if(noteService.updateNote(note, initiator)!=null)
             return ResponseEntity.ok(
                     GenericResponse.builder()
                             .state(true)
@@ -291,7 +291,7 @@ public class UserContentController {
         response = taskService.verifyBelongsToGroup(maybeTask.get(), groupID);
         if(response!=null) return response;
 
-        if(taskService.deleteTask(maybeTask.get()))
+        if(taskService.deleteTask(maybeTask.get(), initiator))
             return ResponseEntity.ok(
                 GenericResponse.builder()
                         .state(true)
@@ -316,7 +316,7 @@ public class UserContentController {
         response = noteService.verifyBelongsToGroup(maybeNote.get(), groupID);
         if(response!=null) return response;
 
-        if(noteService.deleteNote(maybeNote.get()))
+        if(noteService.deleteNote(maybeNote.get(), initiator))
             return ResponseEntity.ok(
                     GenericResponse.builder()
                             .state(true)

@@ -47,6 +47,7 @@ export default function EditNoteModal({noteID}: IProps) {
         mutationFn: state=>callAPI<RESTAPI.DeleteNote.IEndpoint>("DELETE","/api/groups/:groupID/notes/:noteID",{state} as any,{groupID: activeGroup?.toString() as string, noteID: noteID.toString()}),
         onSuccess: ()=>{
 			queryClient.invalidateQueries({queryKey: ["Notes", activeGroup]});
+			queryClient.invalidateQueries({queryKey: ["EventLog", activeGroup]});
 			modalContext.closeModal();
 		}
     });
@@ -59,6 +60,7 @@ export default function EditNoteModal({noteID}: IProps) {
 		mutationFn: data=>callAPI<RESTAPI.UpdateNote.IEndpoint>("PUT","/api/groups/:groupID/notes/:noteID",data, {groupID: activeGroup?.toString() as string, noteID: noteID.toString()}),
 		onSuccess: ()=>{
 			queryClient.invalidateQueries({queryKey: ["Notes", activeGroup]});
+			queryClient.invalidateQueries({queryKey: ["EventLog", activeGroup]});
 			modalContext.closeModal();
 		},
 		onError: ()=>setSubmitError(true)

@@ -29,6 +29,7 @@ export default function CreateNoteModal() {
 		mutationFn: data=>callAPI<RESTAPI.CreateNote.IEndpoint>("POST","/api/groups/:groupID/notes",data, {groupID: activeGroup?.toString() as string}),
 		onSuccess: ()=>{
 			queryClient.invalidateQueries({queryKey: ["Notes", activeGroup]});
+			queryClient.invalidateQueries({queryKey: ["EventLog", activeGroup]});
 			modalContext.closeModal();
 		},
 		onError: ()=>setSubmitError(true)

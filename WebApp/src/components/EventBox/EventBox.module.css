@@ -54,14 +54,25 @@
     align-items: center;
 }
 
+.EventCardHeader i {
+    color: var(--primary-dark-1-color);
+}
+
 .EventCardHeader h6{
     margin: 0;
     margin-left: 0.35rem;
 }
 
 .EventCardBody {
+    font-size: 0.8em;
     flex: 1;
     padding: 0.5rem 1rem;
+    color: var(--brighter-font-color);
+}
+
+.EventCardBody h5 {
+    font-weight: normal;
+    margin: 0.5em 0;
 }
 
 .EventCardFooter span {

@@ -1,12 +1,11 @@
 package com.api.services;
 
+import com.api.dto.EventLogEntryContents.GenericContent;
+import com.api.dto.UserBasic;
 import com.api.dto.requests.NoteDefManagementRequest;
-import com.api.dto.requests.ResolvedTaskDefManagementRequest;
-import com.api.dto.requests.TaskDefManagementRequest;
 import com.api.dto.responses.GenericResponse;
 import com.api.models.Group;
 import com.api.models.Note;
-import com.api.models.Task;
 import com.api.models.User;
 import com.api.repositories.NoteRepository;
 import lombok.RequiredArgsConstructor;
@@ -88,6 +87,14 @@ public class NoteService {
                 .build();
 
         try {
+            var content = GenericContent.builder()
+                    .scope("note")
+                    .type("create")
+                    .name(note.getTitle())
+                    .build();
+
+            groupService.postEventLogEntry(note.getGroup(), creator.getDTO(), content);
+
             note = repository.save(note);
         }catch(Exception ex) {
             return null;
@@ -96,8 +103,16 @@ public class NoteService {
         return note;
     }
 
-    public Note updateNote(Note note) {
+    public Note updateNote(Note note, UserBasic initiator) {
         try {
+            var content = GenericContent.builder()
+                    .scope("note")
+                    .type("update")
+                    .name(note.getTitle())
+                    .build();
+
+            groupService.postEventLogEntry(note.getGroup(), initiator, content);
+
             note = repository.save(note);
         }catch(Exception ex) {
             return null;
@@ -106,13 +121,21 @@ public class NoteService {
         return note;
     }
 
-    public boolean deleteNote(Note note) {
+    public boolean deleteNote(Note note, UserBasic initiator) {
         try {
             var group = note.getGroup();
             if(!group.getNotes().remove(note)) return false;
 
             group = groupService.updateGroup(group);
             repository.delete(note);
+
+            var content = GenericContent.builder()
+                    .scope("note")
+                    .name(note.getTitle())
+                    .build();
+
+            groupService.postEventLogEntry(note.getGroup(), initiator, content);
+
             return group!=null;
         }catch (Exception ex) {
             return false;

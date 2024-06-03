@@ -1,9 +1,10 @@
 package com.api.services;
 
+import com.api.dto.EventLogEntryContents.AlterMemberContent;
+import com.api.dto.EventLogEntry;
 import com.api.dto.GroupMembers;
 import com.api.dto.responses.GenericResponse;
 import com.api.dto.requests.GroupDefManagementRequest;
-import com.api.dto.responses.GroupMembersResponse;
 import com.api.dto.UserBasic;
 import com.api.models.Group;
 import com.api.models.User;
@@ -14,9 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.api.Utils.groupNotFoundResponse;
@@ -29,6 +28,8 @@ public class GroupService {
     public static Integer MAXIMUM_OWNED_GROUPS = 3;
 
     private final GroupRepository groupRepository;
+
+    private final KafkaService<EventLogEntry> kafkaService;
 
     private final Random random = new Random();
 
@@ -78,6 +79,13 @@ public class GroupService {
 
         group = updateGroup(group);
 
+        final var groupID = group.getID();
+
+        if(!kafkaService.createTopic("eventlog-group-"+groupID)) {
+            deleteGroup(group);
+            return false;
+        }
+
         return addToGroup(group, owner);
     }
 
@@ -116,11 +124,18 @@ public class GroupService {
 
     public boolean addToGroup(Group group, User user) {
         group.getMembers().add(user);
+        var content = AlterMemberContent.builder()
+                .scope("member")
+                .type("join")
+                .targetUser(user.getDTO())
+                .build();
+
+        this.postEventLogEntry(group, user.getDTO(), content);
 
         return updateGroup(group)!=null;
     }
 
-    public boolean removeFromGroup(Group group, User user) {
+    public boolean removeFromGroup(Group group, User user, Boolean isKick) {
         final var isOwner = isGroupOwner(group, user.getDTO());
 
         if(group.getMembers().size()==1 && isOwner) {
@@ -133,6 +148,14 @@ public class GroupService {
                 var newCandidate = group.getMembers().get(0);
                 group.setOwner(newCandidate);
             }
+
+            var content = AlterMemberContent.builder()
+                    .scope("member")
+                    .type(isKick?"kick":"leave")
+                    .targetUser(user.getDTO())
+                    .build();
+
+            this.postEventLogEntry(group, isKick?group.getOwner().getDTO():user.getDTO(), content);
 
             groupRepository.save(group);
             return true;
@@ -147,7 +170,22 @@ public class GroupService {
                 .build();
     }
 
+    public List<EventLogEntry> getGroupEventLog(Group group) {
+        return kafkaService.readXLastMessages("eventlog-group-"+group.getID(), 10);
+    }
+
+    public void postEventLogEntry(Group group, UserBasic originator, Object content) {
+        EventLogEntry entry = EventLogEntry.builder()
+                .targetGroup(group.getBasicDTO())
+                .originatedAt(new Date())
+                .originator(originator)
+                .content(content)
+                .build();
+        kafkaService.sendToTopic("eventlog-group-"+group.getID(),entry);
+    }
+
     public void deleteGroup(Group group) {
         groupRepository.delete(group);
+        kafkaService.deleteTopic("eventlog-group-"+group.getID());
     }
 }

@@ -56,6 +56,7 @@ export default function EditTaskModal({taskID}: IProps) {
         mutationFn: state=>callAPI<RESTAPI.DeleteTask.IEndpoint>("DELETE","/api/groups/:groupID/tasks/:taskID",{state} as any,{groupID: activeGroup?.toString() as string, taskID: taskID.toString()}),
         onSuccess: ()=>{
 			queryClient.invalidateQueries({queryKey: ["Tasks", activeGroup]});
+			queryClient.invalidateQueries({queryKey: ["EventLog", activeGroup]});
 			modalContext.closeModal();
 		}
     });
@@ -64,6 +65,7 @@ export default function EditTaskModal({taskID}: IProps) {
 		mutationFn: data=>callAPI<RESTAPI.UpdateTask.IEndpoint>("PUT","/api/groups/:groupID/tasks/:taskID",data, {groupID: activeGroup?.toString() as string, taskID: taskID.toString()}),
 		onSuccess: ()=>{
 			queryClient.invalidateQueries({queryKey: ["Tasks", activeGroup]});
+			queryClient.invalidateQueries({queryKey: ["EventLog", activeGroup]});
 			modalContext.closeModal();
 		},
 		onError: ()=>setSubmitError(true)

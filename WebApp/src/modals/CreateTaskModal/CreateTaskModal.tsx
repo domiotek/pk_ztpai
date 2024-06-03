@@ -38,6 +38,7 @@ export default function CreateTaskModal() {
 		mutationFn: data=>callAPI<RESTAPI.CreateTask.IEndpoint>("POST","/api/groups/:groupID/tasks",data, {groupID: activeGroup?.toString() as string}),
 		onSuccess: ()=>{
 			queryClient.invalidateQueries({queryKey: ["Tasks", activeGroup]});
+			queryClient.invalidateQueries({queryKey: ["EventLog", activeGroup]});
 			modalContext.closeModal();
 		},
 		onError: ()=>setSubmitError(true)

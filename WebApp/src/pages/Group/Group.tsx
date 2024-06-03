@@ -35,7 +35,10 @@ export default function Group() {
 
 	const regenInviteCodeMutation = useMutation<null,RESTAPI.RegenGroupInviteCode.IEndpoint["error"], null>({
         mutationFn: ()=>callAPI<RESTAPI.RegenGroupInviteCode.IEndpoint>("POST","/api/groups/:groupID/regenInvite",null,{groupID: activeGroup?.toString() as string}),
-        onSuccess: ()=>queryClient.invalidateQueries({queryKey: ["GroupData"]}),
+        onSuccess: ()=>{
+			queryClient.invalidateQueries({queryKey: ["GroupData"]});
+			queryClient.invalidateQueries({queryKey: ["EventLog", activeGroup]});
+		},
 		onError: (err=>{
 			setErrCode(err.code);
 			setErrToastShowCounter((errToastShowCounter?errToastShowCounter:0) + 1);
@@ -46,6 +49,7 @@ export default function Group() {
         mutationFn: ()=>callAPI<RESTAPI.LeaveGroup.IEndpoint>("DELETE","/api/groups/:groupID/members/self",null,{groupID: activeGroup?.toString() as string}),
         onSuccess: async ()=>{
 			await queryClient.invalidateQueries({queryKey: ["UserData"]});
+			queryClient.invalidateQueries({queryKey: ["EventLog", activeGroup]});
 			setActiveGroup(null);
 			navigate("/");
 		},
@@ -57,7 +61,10 @@ export default function Group() {
 
 	const kickFromGroupMutation = useMutation<null,RESTAPI.KickFromGroup.IEndpoint["error"], {userID: string}>({
         mutationFn: data=>callAPI<RESTAPI.KickFromGroup.IEndpoint>("DELETE","/api/groups/:groupID/members/:userID",null,{groupID: activeGroup?.toString() as string, userID: data.userID}),
-        onSuccess: ()=>queryClient.invalidateQueries({queryKey: ["GroupData"]}),
+        onSuccess: ()=>{
+			queryClient.invalidateQueries({queryKey: ["GroupData"]});
+			queryClient.invalidateQueries({queryKey: ["EventLog", activeGroup]});
+		},
 		onError: (err=>{
 			setErrCode(err.code);
 			setErrToastShowCounter((errToastShowCounter?errToastShowCounter:0) + 1);

@@ -18,7 +18,10 @@ export default function UpdateGroupNameForm({groupID, initialValue}: IProps) {
 
 	const renameGroupMutation = useMutation<null,RESTAPI.RenameGroup.IEndpoint["error"], RESTAPI.RenameGroup.IRequestData>({
         mutationFn: formData=>callAPI<RESTAPI.RenameGroup.IEndpoint>("PUT","/api/groups/:groupID",formData,{groupID: groupID.toString()}),
-        onSuccess: ()=>queryClient.invalidateQueries({queryKey: ["GroupData"]}),
+        onSuccess: ()=>{
+			queryClient.invalidateQueries({queryKey: ["GroupData"]});
+			queryClient.invalidateQueries({queryKey: ["EventLog", groupID]});
+		},
 		onError: (err=>setError(err.code))
     });
 

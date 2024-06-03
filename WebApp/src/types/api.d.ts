@@ -203,6 +203,63 @@ export namespace RESTAPI {
 			creator: Entities.IUserBasic,
 			group: Entities.IGroupBasic
 		}
+
+		namespace EventEntries {
+			type TScopes =  "task" | "note" | "member" | "group"
+			type TTypes<S extends TScopes> = 
+				(S extends "task" | "note"?"create" | "update" | "updateState" | "delete":never) | 
+				(S extends "member"?"join" | "leave" | "kick":never) |
+				(S extends "group"?"rename" | "regenInvite":never)
+
+			interface IGenericEntry<S extends TScopes, T extends TTypes<TScopes> = TTypes<S>> {
+				scope: S
+				type: T
+				name: string
+			}
+
+			interface IAlterTaskEntry extends IGenericEntry<"task", "create" | "update"> {
+				dueDate: string
+				assignedUser: IUserBasic
+			}
+
+			interface IAlterTaskStateEntry extends IGenericEntry<"task", "updateState"> {
+				state: boolean
+			}
+
+			interface IAlterMemberEntry extends IGenericEntry<"member", TTypes<"member">> {
+				targetUser: IUserBasic
+			}
+
+			interface IRegenInviteEntry extends IGenericEntry<"group", "regenInvite"> {
+				code: string
+			}
+
+			type TContent<S extends TScopes, T extends TTypes<S>> = 
+				(S extends "task"?
+					(T extends "create" | "update"?IAlterTaskEntry
+						:(T extends "updateState"?IAlterTaskStateEntry:IGenericEntry<"task","delete">)
+					)
+					:never
+				) | 
+				(S extends "note"?IGenericEntry<Exclude<S, "task" | "member" | "group">,TTypes<Exclude<S, "task" | "member" | "group">>>:never)| 
+				(S extends "member"?IAlterMemberEntry:never) |
+				(S extends "group"?
+					(T extends "regenInvite"?IRegenInviteEntry
+						:IGenericEntry<S, T>
+					)
+					:never
+				)
+		}
+
+		interface IEventLogEntry<S extends EventEntries.TScopes = EventEntries.TScopes, T extends EventEntries.TTypes = EventEntries.TTypes<S>> {
+			originator: IUserBasic
+			targetGroup: IGroupBasic
+			originatedAt: string
+			content: EventEntries.TContent<S, T>
+		}
+
+		type test = IEventLogEntry<"group">
+		type test2 = test["content"]
 	}
 
 	namespace GetNotes {
@@ -341,5 +398,13 @@ export namespace RESTAPI {
 		}
 
 		type IEndpoint = Common.IBuildAPIEndpoint<"PUT", "/api/groups/:groupID/notes/:noteID", null, "NoEntity" | "AccessDenied" | "UnrecognizedEntity", IRequestData, IURLParams>
+	}
+
+	namespace GetEventLog {
+		interface IURLParams extends Record<string, string> {
+			groupID: string
+		}
+
+		type IEndpoint = Common.IBuildAPIEndpoint<"GET", "/api/groups/:groupID/events", Entities.IEventLogEntry[], "NoEntity" | "AccessDenied", null, IURLParams>
 	}
 }

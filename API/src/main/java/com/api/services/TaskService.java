@@ -1,5 +1,8 @@
 package com.api.services;
 
+import com.api.dto.EventLogEntryContents.AlterTaskContent;
+import com.api.dto.EventLogEntryContents.AlterTaskStateContent;
+import com.api.dto.EventLogEntryContents.GenericContent;
 import com.api.dto.UserBasic;
 import com.api.dto.requests.ResolvedTaskDefManagementRequest;
 import com.api.dto.requests.TaskDefManagementRequest;
@@ -12,10 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import static com.api.Utils.groupNotFoundResponse;
 
@@ -69,7 +71,10 @@ public class TaskService {
         final var result = new ArrayList<com.api.dto.Task>();
 
         for (var task : tasks) {
-            final var assignedUser = task.getAssignedUser();
+            var assignedUser = task.getAssignedUser();
+            if(assignedUser!=null&&groupService.isInGroup(group, assignedUser.getDTO()))
+                assignedUser = null;
+
             result.add(com.api.dto.Task.builder()
                             .taskID(task.getID())
                             .creator(task.getCreator().getDTO())
@@ -92,7 +97,10 @@ public class TaskService {
 
         if(task.isEmpty()) return null;
 
-        final var assignedUser = task.get().getAssignedUser();
+        var assignedUser = task.get().getAssignedUser();
+        if(assignedUser!=null&&groupService.isInGroup(task.get().getGroup(), assignedUser.getDTO()))
+            assignedUser = null;
+
         return com.api.dto.Task.builder()
                 .taskID(task.get().getID())
                 .creator(task.get().getCreator().getDTO())
@@ -121,31 +129,76 @@ public class TaskService {
                 .build();
 
         try {
+
+            SimpleDateFormat sdf;
+            sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+
+            var content = AlterTaskContent.builder()
+                    .scope("task")
+                    .type("create")
+                    .name(task.getTitle())
+                    .dueDate(task.getDueDate()!=null?sdf.format(task.getDueDate()):null)
+                    .assignedUser(task.getAssignedUser()!=null?task.getAssignedUser().getDTO():null)
+                    .build();
+
+            groupService.postEventLogEntry(group, creator.getDTO(), content);
             task = repository.save(task);
         }catch(Exception ex) {
+            System.out.println(ex.getMessage());
             return null;
         }
 
         return task;
     }
 
-    public Task updateTask(Task task) {
+    public Task updateTask(Task task, UserBasic initiator, boolean isJustState) {
         try {
+            SimpleDateFormat sdf;
+            sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+
+            var content = isJustState?
+                    AlterTaskStateContent.builder()
+                            .scope("task")
+                            .type("updateState")
+                            .name(task.getTitle())
+                            .state(task.getCompletionState())
+                            .build()
+            :
+                    AlterTaskContent.builder()
+                            .scope("task")
+                            .type("update")
+                            .name(task.getTitle())
+                            .dueDate(task.getDueDate()!=null?sdf.format(task.getDueDate()):null)
+                            .assignedUser(task.getAssignedUser()!=null?task.getAssignedUser().getDTO():null)
+                            .build();
+
+            groupService.postEventLogEntry(task.getGroup(), initiator, content);
+
             task = repository.save(task);
         }catch(Exception ex) {
+            System.out.println(ex.getMessage());
             return null;
         }
 
         return task;
     }
 
-    public boolean deleteTask(Task task) {
+    public boolean deleteTask(Task task, UserBasic initiator) {
         try {
             var group = task.getGroup();
             if(!group.getTasks().remove(task)) return false;
 
             group = groupService.updateGroup(group);
             repository.delete(task);
+
+            var content = GenericContent.builder()
+                    .scope("task")
+                    .type("delete")
+                    .name(task.getTitle())
+                    .build();
+
+            groupService.postEventLogEntry(task.getGroup(), initiator, content);
+
             return group!=null;
         }catch (Exception ex) {
             return false;

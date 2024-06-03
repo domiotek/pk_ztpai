@@ -26,6 +26,9 @@ export default React.memo(function AccountPopup({accountName, groups, show, onAc
 		notify();
 		setActiveGroup(this);
 		queryClient.invalidateQueries({queryKey: ["GroupData"]});
+		queryClient.invalidateQueries({queryKey: ["Tasks", activeGroup]});
+		queryClient.invalidateQueries({queryKey: ["Notes", activeGroup]});
+		queryClient.invalidateQueries({queryKey: ["EventLog", activeGroup]});
 	},[notify]);
 
   	return (

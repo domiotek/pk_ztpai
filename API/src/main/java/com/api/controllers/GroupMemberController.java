@@ -83,7 +83,7 @@ public class GroupMemberController {
 
         var resolvedInitiator = userService.getUser(initiator.getID());
 
-        resolvedInitiator.ifPresent(user -> groupService.removeFromGroup(group.get(), user));
+        resolvedInitiator.ifPresent(user -> groupService.removeFromGroup(group.get(), user, false));
 
         return ResponseEntity.ok(
                 GenericResponse.builder()
@@ -107,7 +107,7 @@ public class GroupMemberController {
 
         var resolvedUser = userService.getUser(userID);
 
-        if(resolvedUser.isPresent() && groupService.removeFromGroup(group.get(), resolvedUser.get()))
+        if(resolvedUser.isPresent() && groupService.removeFromGroup(group.get(), resolvedUser.get(), true))
             return ResponseEntity.ok(
                     GenericResponse.builder()
                             .state(true)

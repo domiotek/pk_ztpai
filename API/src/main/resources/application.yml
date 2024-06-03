@@ -8,3 +8,5 @@ spring:
     showSql: 'true'
     hibernate:
       ddl-auto: 'update'
+  kafka:
+    bootstrap-servers: "127.0.0.1:9092"

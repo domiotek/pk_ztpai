@@ -1,5 +1,8 @@
 package com.api.controllers;
 
+import com.api.dto.EventLogEntryContents.GenericContent;
+import com.api.dto.EventLogEntryContents.RegenInviteContent;
+import com.api.dto.responses.EventLogResponse;
 import com.api.dto.responses.GenericResponse;
 import com.api.dto.Group;
 import com.api.dto.requests.GroupDefManagementRequest;
@@ -9,6 +12,8 @@ import com.api.services.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
 
 import static com.api.Utils.*;
 
@@ -96,13 +101,21 @@ public class GroupController {
 
         group.setName(request.getGroupName());
 
-        if(service.updateGroup(group)!=null)
+        if(service.updateGroup(group)!=null) {
+            var content = GenericContent.builder()
+                    .scope("group")
+                    .name(request.getGroupName())
+                    .type("rename")
+                    .build();
+
+            service.postEventLogEntry(group, initiator, content);
+
             return ResponseEntity.ok(
                     GenericResponse.builder()
                             .state(true)
                             .build()
             );
-        else
+        }else
             return ResponseEntity.internalServerError().body(internalErrorResponse());
     }
 
@@ -122,14 +135,46 @@ public class GroupController {
 
         group.get().setInviteCode(service.generateInviteCode());
 
-        if(service.updateGroup(group.get())!=null)
+        if(service.updateGroup(group.get())!=null) {
+            var content = RegenInviteContent.builder()
+                    .scope("group")
+                    .type("regenInvite")
+                    .code(group.get().getInviteCode())
+                    .build();
+
+            service.postEventLogEntry(group.get(), initiator, content);
+
             return ResponseEntity.ok(
                     GenericResponse.builder()
                             .state(true)
                             .build()
             );
-        else
+        }else
             return ResponseEntity.internalServerError().body(internalErrorResponse());
+    }
+
+    @GetMapping("/{groupID}/events")
+    public ResponseEntity<EventLogResponse> getEventLog(@PathVariable Number groupID) {
+        var group = service.getGroup(groupID);
+
+        if(group.isEmpty())
+            return ResponseEntity.status(404).body(new EventLogResponse(false, "NoEntity", "Such group doesn't exist"));
+
+        var initiator = userService.getSignedInUser();
+
+        if(!service.isInGroup(group.get(), initiator)) {
+
+            return ResponseEntity.status(403).body(new EventLogResponse(false, "AccessDenied", "You don't have permissions to view this data."));
+        }
+
+        var entries = service.getGroupEventLog(group.get());
+
+        Collections.reverse(entries);
+
+        return ResponseEntity.ok(EventLogResponse.builder()
+                        .state(true)
+                        .data(entries)
+                .build());
     }
 
 }
