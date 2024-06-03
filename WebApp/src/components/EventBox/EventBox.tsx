@@ -59,6 +59,11 @@ export default function EventBox() {
 						result.content = `Named "${entry.content.name}"`;
 						result.icon = "fa-circle-minus";
 					break;
+					case "updateState":
+						result.title = `${entry.originator.name} ${(entry.content as RESTAPI.Entities.EventEntries.IAlterTaskStateEntry).state?"":"un"}completed a task`;
+						result.content = `Named "${entry.content.name}"`;
+						result.icon = (entry.content as RESTAPI.Entities.EventEntries.IAlterTaskStateEntry).state?"fa-circle-check":"fa-circle";
+					break;
 				}
 			break;
 			case "group":

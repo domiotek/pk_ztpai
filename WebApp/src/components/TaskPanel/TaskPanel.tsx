@@ -2,7 +2,7 @@ import { MouseEvent, MouseEventHandler, useCallback, useContext, useRef, useStat
 import classes from "./TaskPanel.module.css";
 import { RESTAPI } from "../../types/api";
 import {DateTime} from "luxon";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { callAPI } from "../../modules/utils";
 import { AppContext } from "../../App";
 
@@ -17,12 +17,14 @@ export default function TaskPanel({data, onClick}: IProps) {
 	const [apiCallInProgress, setAPICallInProgress] = useState<boolean>(false);
 
 	const toSetStateRef = useRef<boolean>(taskState);
+	const queryClient = useQueryClient();
 
 	const toggleStateMutation = useMutation<null,RESTAPI.ToggleTaskState.IEndpoint["error"], boolean>({
         mutationFn: state=>callAPI<RESTAPI.ToggleTaskState.IEndpoint>("PUT","/api/groups/:groupID/tasks/:taskID/state",{state} as any,{groupID: activeGroup?.toString() as string, taskID: data.taskID.toString()}),
         onSuccess: ()=>{
 			setTaskState(!taskState);
 			setAPICallInProgress(false);
+			queryClient.invalidateQueries({queryKey: ["EventLog"]});
 		}
     });
 
