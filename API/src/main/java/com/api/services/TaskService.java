@@ -72,7 +72,7 @@ public class TaskService {
 
         for (var task : tasks) {
             var assignedUser = task.getAssignedUser();
-            if(assignedUser!=null&&groupService.isInGroup(group, assignedUser.getDTO()))
+            if(assignedUser!=null&&!groupService.isInGroup(group, assignedUser.getDTO()))
                 assignedUser = null;
 
             result.add(com.api.dto.Task.builder()
@@ -98,7 +98,7 @@ public class TaskService {
         if(task.isEmpty()) return null;
 
         var assignedUser = task.get().getAssignedUser();
-        if(assignedUser!=null&&groupService.isInGroup(task.get().getGroup(), assignedUser.getDTO()))
+        if(assignedUser!=null&&!groupService.isInGroup(task.get().getGroup(), assignedUser.getDTO()))
             assignedUser = null;
 
         return com.api.dto.Task.builder()
