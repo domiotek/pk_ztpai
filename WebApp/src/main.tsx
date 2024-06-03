@@ -12,7 +12,6 @@ import Dashboard from './pages/Dashboard/Dashboard';
 import Items from './pages/Items/Items';
 import Group from './pages/Group/Group';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import Invite from './pages/Invite/Invite';
 
 
@@ -56,7 +55,6 @@ root.render(
 					</Route>
 				</Routes>
 			</BrowserRouter>
-			<ReactQueryDevtools initialIsOpen={false} />
 		</QueryClientProvider>
   </React.StrictMode>
 );

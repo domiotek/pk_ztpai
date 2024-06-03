@@ -1,0 +1,13 @@
+.LoginRedirect {
+	display: flex;
+	flex-direction: column;
+}
+
+.ActionButton {
+	align-self: flex-end;
+	margin-top: 0.5em;
+}
+
+.MessageWrapper img{
+	width: 70%;
+}

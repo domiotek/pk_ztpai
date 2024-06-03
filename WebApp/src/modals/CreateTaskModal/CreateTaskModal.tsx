@@ -34,7 +34,7 @@ export default function CreateTaskModal() {
 		modalContext.setHostClassName(commonClasses.Modal);
 	},[]);
 
-	const submitMutation = useMutation<null, RESTAPI.CreateTask.IEndpoint["error"], RESTAPI.UpdateTask.IRequestData>({
+	const submitMutation = useMutation<null, RESTAPI.CreateTask.IEndpoint["error"], RESTAPI.CreateTask.IRequestData>({
 		mutationFn: data=>callAPI<RESTAPI.CreateTask.IEndpoint>("POST","/api/groups/:groupID/tasks",data, {groupID: activeGroup?.toString() as string}),
 		onSuccess: ()=>{
 			queryClient.invalidateQueries({queryKey: ["Tasks", activeGroup]});
