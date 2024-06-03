@@ -28,9 +28,9 @@ interface IProps<T extends IBaseFetchEntityEndpoint> {
 }
 
 export default function EntityList<T extends IBaseFetchEntityEndpoint>({header, viewAllLink, dataSetID, endpointURL, itemFactory, noItemsImageUrl}: IProps<T>) {
-	const {activeGroup, userData, setActiveGroup} = useContext(AppContext);
+	const {activeGroup} = useContext(AppContext);
 
-	const {error, data: items, isFetching} = useQuery<T["returnData"], T["error"]>({
+	const { data: items, isFetching} = useQuery<T["returnData"], T["error"]>({
         queryKey: [dataSetID, activeGroup],
         queryFn: ()=>callAPI<T>("GET",endpointURL,null, {groupID: activeGroup?.toString() ?? ""}),
         retry: true,

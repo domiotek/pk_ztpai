@@ -5,7 +5,7 @@ import { DateTime } from "luxon";
 
 interface IProps {
 	onClick?: MouseEventHandler
-	data: RESTAPI.GetNotes.INote
+	data: RESTAPI.Entities.INote
 }
 
 export default function NotePanel({data, onClick}: IProps) {
