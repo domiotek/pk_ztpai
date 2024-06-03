@@ -5,6 +5,7 @@ import { useContext, useRef } from "react";
 import { AppContext } from "../../App";
 import { callAPI } from "../../modules/utils";
 import { DateTime } from "luxon";
+import { PuffLoader } from "react-spinners";
 
 export default function EventBox() {
 	const {activeGroup} = useContext(AppContext);
@@ -111,45 +112,59 @@ export default function EventBox() {
 		<section className={classes.RecentEvents}>
 			<h5>Recent events</h5>
 			<div className={classes.EventCardCarousel}>
-				<button type="button" title="Scroll left" onClick={scrollLeft}>
-					<i className="fa-solid fa-chevron-left" />
-				</button>
 				<div ref={containerRef}>
 					{
 						isFetching||!data?
-							<div>
-								Loading...
-							</div>
+							isFetching?
+								<div className={classes.CenteredView}>
+									<PuffLoader color="var(--secondary-color)" size={"5em"} />
+								</div>
+							:
+								<div className={classes.ErrorView}>
+									<h1 className="fas fa-circle-exclamation" />
+									<h4>Couldn't load data</h4>
+								</div>
 						:
-							data.map(entry=>{
-								const resolvedEntry = resolveEntry(entry);
+							<>
+								<button type="button" title="Scroll left" onClick={scrollLeft}>
+									<i className="fa-solid fa-chevron-left" />
+								</button>
+								{
+									data.length>0?
+										data.map(entry=>{
+											const resolvedEntry = resolveEntry(entry);
 
-								return <div key={entry.originatedAt} className={classes.EventCard}>
-											<div className={classes.EventCardHeader}>
-												<i className={`fas ${resolvedEntry.icon}`} />
-												<h6>{resolvedEntry.title}</h6>
-											</div>
-											<div className={classes.EventCardBody}>
-												{
-													Array.isArray(resolvedEntry.content)?
-														resolvedEntry.content.map(line=>
-															<h5 key={line}>{line}</h5>
-														)
-													:
-													resolvedEntry.content
-												}
-											</div>
-											<div className={classes.EventCardFooter}>
-												<span>{DateTime.fromISO(entry.originatedAt).toRelative()}</span>
-											</div>
+											return <div key={entry.originatedAt} className={classes.EventCard}>
+														<div className={classes.EventCardHeader}>
+															<i className={`fas ${resolvedEntry.icon}`} />
+															<h6>{resolvedEntry.title}</h6>
+														</div>
+														<div className={classes.EventCardBody}>
+															{
+																Array.isArray(resolvedEntry.content)?
+																	resolvedEntry.content.map(line=>
+																		<h5 key={line}>{line}</h5>
+																	)
+																:
+																resolvedEntry.content
+															}
+														</div>
+														<div className={classes.EventCardFooter}>
+															<span>{DateTime.fromISO(entry.originatedAt).toRelative()}</span>
+														</div>
+													</div>
+										})
+									:
+										<div className={classes.CenteredView}>
+											<h5>Nothing happened, yet...</h5>
 										</div>
-							})
+								}
+								<button type="button" title="Scroll right" onClick={scrollRight}>
+									<i className="fa-solid fa-chevron-right"></i>
+								</button>
+							</>
 					}
 				</div>
-				
-				<button type="button" title="Scroll right" onClick={scrollRight}>
-					<i className="fa-solid fa-chevron-right"></i>
-				</button>
 			</div>
 		</section>
 	)
